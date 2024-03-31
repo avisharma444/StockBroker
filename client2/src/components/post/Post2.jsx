@@ -21,7 +21,6 @@ const Post = ({ post }) => {
   //   </div>
   // );
   return (
-
     <div className="post">
       <div className="container">
         <div className="user">
@@ -29,7 +28,7 @@ const Post = ({ post }) => {
             {/* <img src={post.profilePic} alt="" /> */}
             <div className="details">
  
-                <span className="name">STOCK ID : {post.stock_id}</span>
+                <span className="name">STOCK ID : {post.STOCK_ID}</span>
               {/* </Link> */}
               <span className="date">Updated 1 min ago</span>
             </div>
@@ -37,8 +36,9 @@ const Post = ({ post }) => {
           <MoreHorizIcon />
         </div>
         <div className="content">
-          <p>CURRENT PRICE :      {post.current_price}</p>
-          <p>LAST TRADED: PRICE: {post.last_traded_price}</p>
+          <p>CURRENT PRICE :      {post.CURRENT_PRICE}</p>
+          <p>LAST TRADED: PRICE: {post.LAST_TRADED_PRICE}</p>
+          <p>COMPANY NAME: {post.COMPANY_NAME}</p>
 
           {/* <img src={post.img} alt="" /> */}
         </div>

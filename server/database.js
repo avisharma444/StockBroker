@@ -104,12 +104,85 @@ export async function get_watchlist(user_id) {
         return rows;
     } catch (error) {
         // Handle error
-        console.error("Error executing query:", error);
+        console.error("Could not fetch watchlist", error);
         throw error; // Rethrow the error or handle as appropriate
     }
 }
-
-
+export async function get_stocks() {
+    
+    const query = `
+        select S.STOCK_ID,S.CURRENT_PRICE,S.LAST_TRADED_PRICE,C.COMPANY_NAME FROM STOCK AS S JOIN ASSETOWNERSHIP AS C ON (S.STOCK_ID = C.STOCK_ID)`;
+    console.log("in stocks : ")
+    const values = [];
+    
+    try {
+        const [rows] = await pool.query(query, values);
+        console.log(rows)
+        return rows;
+    } catch (error) {
+        // Handle error
+        console.error("Could not fetch stocks", error);
+        throw error; // Rethrow the error or handle as appropriate
+    }
+}
+export async function get_stocks_by_id(user_id) {
+    
+    const query = `
+        select S.STOCK_ID,S.CURRENT_PRICE,S.LAST_TRADED_PRICE,S.COMPANY_NAME from (select S.STOCK_ID,S.CURRENT_PRICE,S.LAST_TRADED_PRICE,C.COMPANY_NAME FROM STOCK AS S JOIN ASSETOWNERSHIP AS C ON (S.STOCK_ID = C.STOCK_ID)) as S join contains as P where P.user_id = ? and (P.stock_id = S.stock_id)`;
+    console.log("in stocks by id : ")
+    const values = [user_id];
+    
+    try {
+        const [rows] = await pool.query(query, values);
+        console.log(rows)
+        return rows;
+    } catch (error) {
+        // Handle error
+        console.error("Could not fetch stocks by id", error);
+        throw error; // Rethrow the error or handle as appropriate
+    }
+}
+export async function orderItem(user_id, stock_id, quantity) {
+    // console.log(user_id,stock_id,quantity)
+    const pricequery = `select current_price from stock where stock_id = ?`
+    const pricevalues = [stock_id]
+    const [rows1] = await pool.query(pricequery, pricevalues);
+    
+    const p = await rows1[0].current_price * quantity;
+    // console.log("moye moye - ",p,rows1)
+    const orderQuery = `
+        INSERT INTO transactions (user_id, stock_id, transaction_value, transaction_type,quantity)
+        VALUES (?, ?,?, "buy",?)
+    `;
+    const values = [user_id, stock_id,p, quantity];
+    try {
+        const[rows] = await pool.query(orderQuery, values);
+        return rows;
+    } catch (error) {
+        console.error('Error ordering item:', error);
+        throw error;
+    }
+}
+export async function sellItem(user_id, stock_id, quantity) {
+    const pricequery = `select current_price from stock where stock_id = ?`
+    const pricevalues = [stock_id]
+    const [rows1] = await pool.query(pricequery, pricevalues);
+    
+    const p = await rows1[0].current_price * quantity;
+    // console.log("moye moye - ",p,rows1)
+    const orderQuery = `
+        INSERT INTO transactions (user_id, stock_id, transaction_value, transaction_type,quantity)
+        VALUES (?, ?,?, "sell",?)
+    `;
+    const values = [user_id, stock_id,p, quantity];
+    try {
+        const[rows] = await pool.query(orderQuery, values);
+        return rows;
+    } catch (error) {
+        console.error('Error ordering item:', error);
+        throw error;
+    }
+}
 // const ans = await get_loss_gain(1000);
 // const new_admin = await addAdmin("admin14","tp");
 

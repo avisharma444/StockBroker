@@ -49,6 +49,7 @@ const Login = () => {
           <form>
             <input type="email" placeholder="email" name="email" onChange={handleChange} />
             <input type="password" placeholder="Password" name = "password" onChange={handleChange} />
+            {err&&err}
             <button onClick={handleLogin}>Login</button>
           </form>
         </div>

@@ -44,7 +44,7 @@ export const login = async (req, res) => {
         }).status(200).json(uid);
     } catch (error) {
         console.error("Error in login:", error);
-        return res.status(500).json("Internal server error");
+        return res.status(500).json("Cant Find Username or password");
     }
 };
 export const logout = (req,res)=>{

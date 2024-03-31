@@ -1,3 +1,5 @@
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import "./leftBar.scss";
 import Friends from "../../assets/1.png";
 import Groups from "../../assets/2.png";
@@ -16,8 +18,17 @@ import { AuthContext } from "../../context/authContext";
 import { useContext } from "react";
 
 const LeftBar = () => {
+  const navigate = useNavigate(); // Hook for navigation
 
   const { currentUser } = useContext(AuthContext);
+
+  const handleBuyStocks = () => {
+    navigate('/buy-stocks');
+  };
+
+  const handleSellStocks = () => {
+    navigate('/sell-stocks');
+  };
 
   return (
     <div className="leftBar">
@@ -30,67 +41,19 @@ const LeftBar = () => {
             />
             <span>{currentUser.name}</span>
           </div>
-          <div className="item">
-            <img src={Friends} alt="" />
-            <span>Friends</span>
-          </div>
-          <div className="item">
-            <img src={Groups} alt="" />
-            <span>Groups</span>
-          </div>
-          <div className="item">
+          <div className="item" onClick={handleBuyStocks}>
             <img src={Market} alt="" />
-            <span>Marketplace</span>
+            <span>Buy Stocks</span>
           </div>
-          <div className="item">
-            <img src={Watch} alt="" />
-            <span>Watch</span>
+          {/* Add the "Sell Stocks" option */}
+          <div className="item" onClick={handleSellStocks}>
+            <img src={Market} alt="" />
+            <span>Sell Stocks</span>
           </div>
-          <div className="item">
-            <img src={Memories} alt="" />
-            <span>Memories</span>
-          </div>
+          {/* Other menu items */}
         </div>
         <hr />
-        <div className="menu">
-          <span>Your shortcuts</span>
-          <div className="item">
-            <img src={Events} alt="" />
-            <span>Events</span>
-          </div>
-          <div className="item">
-            <img src={Gaming} alt="" />
-            <span>Gaming</span>
-          </div>
-          <div className="item">
-            <img src={Gallery} alt="" />
-            <span>Gallery</span>
-          </div>
-          <div className="item">
-            <img src={Videos} alt="" />
-            <span>Videos</span>
-          </div>
-          <div className="item">
-            <img src={Messages} alt="" />
-            <span>Messages</span>
-          </div>
-        </div>
-        <hr />
-        <div className="menu">
-          <span>Others</span>
-          <div className="item">
-            <img src={Fund} alt="" />
-            <span>Fundraiser</span>
-          </div>
-          <div className="item">
-            <img src={Tutorials} alt="" />
-            <span>Tutorials</span>
-          </div>
-          <div className="item">
-            <img src={Courses} alt="" />
-            <span>Courses</span>
-          </div>
-        </div>
+        {/* Other menu sections */}
       </div>
     </div>
   );

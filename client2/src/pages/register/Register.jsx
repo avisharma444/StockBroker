@@ -1,8 +1,12 @@
-import { Link } from "react-router-dom";
+import { Link,useNavigate } from "react-router-dom";
 import "./register.scss";
-import { useState } from "react";
+import { useState ,useContext} from "react";
 import axios from "axios";
+import { AuthContext } from "../../context/authContext";
+
 const Register = () => {
+  const { login } = useContext(AuthContext);
+  const navigate  = useNavigate()
   const [inputs,setInputs] = useState({
     adhaar:"",
     PAN_card:"",
@@ -22,6 +26,10 @@ const Register = () => {
     try{
       console.log(inputs)
       await axios.post("http://localhost:8080/server/auth/register",inputs)
+      await login(inputs)
+        navigate("/")
+      // await login(inputs)
+      //   navigate("/")
     }catch(err){
         setErr(err.response.data)
     }

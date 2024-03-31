@@ -6,6 +6,9 @@ import userroutes from './routes/users.js'
 import authroutes from './routes/auth.js'
 import cookieParser from 'cookie-parser';
 import watchlistroutes from './routes/watchlist.js'
+import stocksroutes from './routes/stocks.js'
+import userstocksroutes from './routes/stockid.js'
+import orderroutes from './routes/order.js'
 // Enable CORS for all routes
 app.use((req,res,next)=>{
     res.header("Access-Control-Allow-Credentials", true)
@@ -15,11 +18,14 @@ app.use(express.json())
 app.use(cors({
     origin:"http://localhost:3000",
 }));
+
 app.use(cookieParser())
+app.use("/server/stocks",stocksroutes)
 app.use("/server/users",userroutes)
 app.use("/server/auth",authroutes)
 app.use("/server/watchlist",watchlistroutes)
-
+app.use("/server/stockbyid",userstocksroutes)
+app.use("/server/order",orderroutes)
 app.get("/admin",async (req,res)=>{
     console.log("reached admin")
     const admininfo = await get_admin_pass()
