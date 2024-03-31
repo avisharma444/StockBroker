@@ -10,8 +10,6 @@ export const watchlist = (req,res)=>{
             if (err) {
                 return res.status(403).json("invalid token");
             }
-            
-
             const id = await userInfo.id;
                     console.log("id: ",id.user_id)
 
