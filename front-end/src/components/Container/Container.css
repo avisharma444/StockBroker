@@ -1,0 +1,89 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 30px;
+  padding: 20px;
+
+  overflow: hidden; /* Ensure contents are clipped if they overflow */
+  opacity: 0; /* Start invisible */
+  transform: translateY(50px); /* Start slightly out of view */
+  transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+}
+
+.left-side, .right-side {
+  flex: 1;
+}
+
+.left-side {
+  padding-right: 20px;
+  transform: translateX(-100%); /* Start off-screen to the left */
+  transition: transform 1s ease-in-out;
+}
+
+.right-side {
+  padding-left: 20px;
+  transform: translateX(100%); /* Start off-screen to the right */
+  transition: transform 1s ease-in-out;
+
+  padding: 30px;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  background-color:rgb(240, 104, 55);
+  color: whitesmoke;
+
+
+}
+
+.photo {
+  background: url('/largest-broker.svg') no-repeat center center;
+  background-size: contain;
+  width: 100%;
+  height: 100%;
+  min-height: 300px; /* Ensure it has a minimum height */
+}
+
+.right-side h1 {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.right-side p {
+  font-size: 16px;
+  margin-bottom: 20px;
+}
+
+.right-side ul {
+  list-style-type: disc;
+  padding-left: 20px;
+}
+
+.right-side ul li {
+  margin-bottom: 10px;
+}
+
+/* Animation for when the container comes into view */
+.container.in-view {
+  opacity: 1; /* Fade in */
+  transform: translateY(0); /* Move into place */
+}
+
+.container.in-view .left-side {
+  transform: translateX(0); /* Slide in from the left */
+}
+
+.container.in-view .right-side {
+  transform: translateX(0); /* Slide in from the right */
+}

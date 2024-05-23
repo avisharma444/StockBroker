@@ -16,19 +16,23 @@ export async function get_admin_pass(){
 }
 
 export async function get_loss_gain(mn){
+
     const [query_res] = await pool.query(`
                                         Select email,user_id from 
                                         user NATURAL JOIN portfolio
                                         WHERE total_loss_gain>=${mn};`);
     return query_res;
+
 }
+
 export async function getuser(aadhar, PAN_card, phone_no, email) {
+
     const query = `
         SELECT * FROM USER 
         WHERE aadhar = ? OR phone_no = ? OR PAN_card = ? OR email = ?`;
     
     const values = [aadhar, phone_no, PAN_card, email];
-    
+
     try {
         const [rows] = await pool.query(query, values);
         console.log(rows)
@@ -38,7 +42,9 @@ export async function getuser(aadhar, PAN_card, phone_no, email) {
         console.error("Error executing query:", error);
         throw error; // Rethrow the error or handle as appropriate
     }
+
 }
+
 export async function finduser(email,password) {
     const query = `
         SELECT * FROM USER 
@@ -66,16 +72,14 @@ export async function insertuser(password,aadhar,PAN_card,phone_no,email,dob,nam
             VALUES (?, ?, ?, ?, ?, ?, ?, ?,?);
         `, [newid, email, password, PAN_card, aadhar, '1990-01-15','2024-02-10 06:30:00', phone_no,name]);
 
-        // Return the result of the insertion
     return insertResult;
-    // const [query_res] = await pool.query(`
-    //                                     INSERT INTO user VALUES (${newid},${email},${password},${PAN_card},${aadhar},'1990-01-15','2024-02-10 06:30:00',${phone_no})`);
-    // return query_res;
+
     }catch(err){
         console.error('Error inserting user:', err);
         throw error;
     }
 }
+
 export async function addAdmin(username , password){
     const [query_res] = await pool.query(`
     INSERT into admin(username, password)
@@ -84,13 +88,6 @@ export async function addAdmin(username , password){
     return get_admin_pass();
 }
 
-// export async function get_watchlist(){
-//     const [query_res] = await pool.query(`
-//                                         Select email,user_id from 
-//                                         user NATURAL JOIN portfolio
-//                                         WHERE total_loss_gain>=${mn};`);
-//     return query_res;
-// }
 export async function get_watchlist(user_id) {
     
     const query = `
@@ -108,6 +105,7 @@ export async function get_watchlist(user_id) {
         throw error; // Rethrow the error or handle as appropriate
     }
 }
+
 export async function get_stocks() {
     
     const query = `
@@ -125,6 +123,7 @@ export async function get_stocks() {
         throw error; // Rethrow the error or handle as appropriate
     }
 }
+
 export async function get_stocks_by_id(user_id) {
     
     const query = `
@@ -142,6 +141,7 @@ export async function get_stocks_by_id(user_id) {
         throw error; // Rethrow the error or handle as appropriate
     }
 }
+
 export async function orderItem(user_id, stock_id, quantity) {
     // console.log(user_id,stock_id,quantity)
     const pricequery = `select current_price from stock where stock_id = ?`
@@ -163,6 +163,7 @@ export async function orderItem(user_id, stock_id, quantity) {
         throw error;
     }
 }
+
 export async function sellItem(user_id, stock_id, quantity) {
     const pricequery = `select current_price from stock where stock_id = ?`
     const pricevalues = [stock_id]
@@ -171,9 +172,8 @@ export async function sellItem(user_id, stock_id, quantity) {
     const p = await rows1[0].current_price * quantity;
     // console.log("moye moye - ",p,rows1)
     const orderQuery = `
-        INSERT INTO transactions (user_id, stock_id, transaction_value, transaction_type,quantity)
-        VALUES (?, ?,?, "sell",?)
-    `;
+    INSERT INTO transactions (user_id, stock_id, transaction_value, transaction_type,quantity)
+    VALUES (?, ?,?, "sell",?)`;
     const values = [user_id, stock_id,p, quantity];
     try {
         const[rows] = await pool.query(orderQuery, values);

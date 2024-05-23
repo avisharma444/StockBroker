@@ -42,7 +42,7 @@ const Portfolio = () => {
 
   return (
     <div>
-        <h1>Your Portfolio</h1>
+        <h1>Your Portfolio </h1>
       {data.map((item, index) => (
         <Post key={index} post={item} />
       ))}

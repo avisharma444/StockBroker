@@ -22,7 +22,7 @@ app.use(cors({
 app.use(cookieParser())
 app.use("/server/stocks",stocksroutes)
 app.use("/server/users",userroutes)
-app.use("/server/auth",authroutes)
+app.use("/api/v1/auth",authroutes)
 app.use("/server/watchlist",watchlistroutes)
 app.use("/server/stockbyid",userstocksroutes)
 app.use("/server/order",orderroutes)
