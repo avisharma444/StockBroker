@@ -1,4 +1,4 @@
-import React, { useState,createContext } from 'react'
+import React, { useState,createContext, useEffect } from 'react'
 
 export const StoreContext = createContext(null);
 
@@ -10,6 +10,12 @@ const StoreContextProvider = (props) => {
         token,
         setToken
     }
+
+    useEffect(()=>{
+        if(localStorage.getItem("token")){
+            setToken(localStorage.getItem("token"))
+        }
+    },[])
 
     return (
         <StoreContext.Provider value = {contextValue}>

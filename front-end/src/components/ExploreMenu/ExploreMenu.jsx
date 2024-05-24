@@ -16,7 +16,10 @@ const stockNames = {
 
 const ExploreMenu = () => {
   const [stocks, setStocks] = useState([]);
-  const [chartData, setChartData] = useState({});
+  const [chartData, setChartData] = useState({
+    labels: [],
+    datasets: []
+  });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -123,7 +126,11 @@ const ExploreMenu = () => {
       <div className="chart-container">
         <h2>Stock Price Chart</h2>
         <div className="chart">
-          <Line data={chartData} />
+          {chartData.labels.length > 0 && chartData.datasets.length > 0 ? (
+            <Line data={chartData} />
+          ) : (
+            <div>No chart data available</div>
+          )}
         </div>
       </div>
     </div>
