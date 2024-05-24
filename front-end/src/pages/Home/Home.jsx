@@ -2,10 +2,10 @@ import React from 'react'
 import Header from '../../components/Header/Header'
 import './Home.css'
 import Conntainer from '../../components/Container/Conntainer'
-const Home = () => {
+const Home = ({setShowLogin}) => {
   return (
     <div>
-      <Header/>
+      <Header setShowLogin = {setShowLogin}/>
       <Conntainer/>
     </div>
   )

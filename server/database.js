@@ -62,7 +62,23 @@ export async function finduser(email,password) {
         throw error; // Rethrow the error or handle as appropriate
     }
 }
+export async function finduserLogin(email) {
+    const query = `
+        SELECT * FROM USER 
+        WHERE email = ?`;
+    
+    const values = [email];
 
+    try {
+        const [rows] = await pool.query(query, values);
+        // console.log(rows)
+        return rows[0].password;
+    } catch (error) {
+        // Handle error
+        console.error("Error executing query:", error);
+        throw error; // Rethrow the error or handle as appropriate
+    }
+}
 export async function insertuser(password,aadhar,PAN_card,phone_no,email,dob,name){
     try{
     const [query_res1] = await pool.query("SELECT MAX(user_id) as id FROM user;");

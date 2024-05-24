@@ -1,31 +1,34 @@
-import React, { useState } from 'react'
-import './Navbar.css'
-import { assets } from '../../assets/food del assets/frontend_assets/assets'
+import React, { useState, useEffect } from 'react';
+import './Navbar.css';
+import { assets } from '../../assets/food del assets/frontend_assets/assets';
 
-const Navbar = ({setShowLogin}) => {
-    const [menu,setMenu] = useState("home");
+const Navbar = ({ setShowLogin }) => {
+  const [menu, setMenu] = useState('home');
 
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollButton = document.getElementById('scrollToBottomButton');
+      if (scrollButton) {
+        scrollButton.scrollIntoView({ behavior: 'smooth' });
+      }
+    };
+
+    if (menu === 'contact-us') {
+      handleScroll();
+    }
+  }, [menu]);
 
   return (
     <div className='navbar'>
       <img src='/logo.svg' alt="" className="logo" />
       <ul className="navbar-menu">
-        <li onClick={()=>setMenu("home")} className={menu==="home"?"active":""}>menu</li>
-        <li onClick={()=>setMenu("menu")} className={menu==="menu"?"active":""}>mobile-app</li>
-        <li onClick={()=>setMenu("mobile-app")} className={menu==="mobile-app"?"active":""}>home</li>
-        <li onClick={()=>setMenu("contact-us")} className={menu==="contact-us"?"active":""}>contact us</li>
+        <li onClick={() => setMenu('home')} className={menu === 'home' ? 'active' : ''}>Home</li>
+        <li onClick={() => setMenu('menu')} className={menu === 'menu' ? 'active' : ''}>Menu</li>
+        <li onClick={() => setMenu('contact-us')} className={menu === 'contact-us' ? 'active' : ''}>Contact Us</li>
       </ul>
-      <div className="navbar-right">
-        <img src={assets.search_icon} alt="" />
-      
-      <div className="navbar-search-icon">
-        <img src={assets.basket_icon} alt="" />
-        <div className="dot"></div>
-      </div>
-      <button onClick={()=>{setShowLogin(true)}}>sign in</button>
-      </div>
+      <button onClick={() => { setShowLogin(true); }}>Sign In</button>
     </div>
-  )
-}
+  );
+};
 
-export default Navbar
+export default Navbar;

@@ -29,7 +29,7 @@
     background: transparent;
     font-size: 16px;
     color:#49557e;
-    border:  1px solid tomato;
+    border:  1px solid rgb(147, 137, 255);
     border-radius: 25px;
     padding: 10px 30px;
     cursor: pointer;
@@ -38,7 +38,7 @@
 }
 
 .navbar button:hover{
-    background-color: #fff4f2;
+    background-color: #9670ff;
 }
 
 .navbar .active{

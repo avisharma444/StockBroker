@@ -1,5 +1,6 @@
 import express from 'express'
 const app = express()
+import 'dotenv/config'
 import {addAdmin,get_loss_gain,get_admin_pass} from './database.js';
 import cors from 'cors';
 import userroutes from './routes/users.js'
@@ -16,13 +17,13 @@ app.use((req,res,next)=>{
 })
 app.use(express.json())
 app.use(cors({
-    origin:"http://localhost:3000",
+    origin:"http://localhost:5173",
 }));
 
 app.use(cookieParser())
 app.use("/server/stocks",stocksroutes)
 app.use("/server/users",userroutes)
-app.use("/api/v1/auth",authroutes)
+app.use("/api/v1/user",authroutes)
 app.use("/server/watchlist",watchlistroutes)
 app.use("/server/stockbyid",userstocksroutes)
 app.use("/server/order",orderroutes)
