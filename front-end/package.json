@@ -11,7 +11,14 @@
   },
   "dependencies": {
     "axios": "^1.7.2",
+<<<<<<< HEAD
+=======
+    "chart.js": "^4.4.3",
+    "install": "^0.13.0",
+    "npm": "^10.8.0",
+>>>>>>> 6a3a6b0ac1fc6faa9f3960915edb14f3808ca79a
     "react": "^18.2.0",
+    "react-chartjs-2": "^5.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.23.1"
   },
