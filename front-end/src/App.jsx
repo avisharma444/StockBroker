@@ -8,6 +8,7 @@ import LoginPopup from './components/LoginPopup/LoginPopup';
 import Footer from './components/Footer/Footer';
 import ExploreMenu from './components/ExploreMenu/ExploreMenu';
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
+import Dashboard from './components/Dashboard/Dashboard';
 
 const App = () => {
   const [showLogin, setShowLogin] = useState(false);
@@ -25,7 +26,7 @@ const App = () => {
             path='/explore'
             element={
               <ProtectedRoute showLogin={showLogin}>
-                <ExploreMenu />
+                <Dashboard/>
               </ProtectedRoute>
             }
           />

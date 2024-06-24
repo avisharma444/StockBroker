@@ -9,7 +9,7 @@ import bcrypt from 'bcrypt'
 const createToken = (id) => {
     return jwt.sign({id},process.env.JWT_SECRET)
 }
-// import { finduser } from '../database.js';
+// import { finduser } from '../database.js';s
 export const register = async (req,res)=>{
     const adhaar = req.body.adhaar;
     const PAN_card = req.body.PAN_card;
@@ -22,16 +22,22 @@ export const register = async (req,res)=>{
     try{
     const try_user =  await getuser(adhaar,PAN_card,phone_no,email)
     console.log("sdf",try_user)
-    if(try_user.length>0){
-        
-         return res.status(409).json("user already exists indb")
+    if(try_user.length == 0){
+        console.log("empty ans")
     }
+    if(try_user.length>0){
+        return res.status(409).json("user already exists indb")
+    }
+    console.log("here - ",email,password,adhaar,PAN_card,name)
     if(!validator.isEmail(email)){
+        console.log("noooo")
         return res.json("Please enter a valid email!")
     }
     if(password.length < 8){
+        console.log("no")
         return res.json("Please enter a strong password")
     }
+    console.log("here - ",email,password,adhaar,PAN_card,name)
     // hashing user password
     const salt = await bcrypt.genSalt(10)
     const hashed_pass = await bcrypt.hash(password,salt)
@@ -59,14 +65,16 @@ export const login = async (req, res) => {
             return res.status(404).json({success:false,message:"email/password is not correct"});
         }
         
-        const real_pass = try_user
-        console.log(password,try_user)
+        const real_pass = try_user.password
+        // console.log(try_user.password,try_user)
 
         const isMatch = await bcrypt.compare(password,real_pass)
         if(!isMatch){return res.json({success:false,message:"Invalid Credentials"})}
 
-        const uid = try_user[0];
+        const uid = try_user.user_id;
+        // console.log("creating token with user id - ",uid);
         const token = createToken(uid)
+        // console.log("created token - ",uid);
         res.json({success:true,token:token})
 
     } catch (error) {

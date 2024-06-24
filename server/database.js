@@ -45,6 +45,22 @@ export async function getuser(aadhar, PAN_card, phone_no, email) {
 
 }
 
+export async function getuserinfo(user_id) {
+    
+    const query = `SELECT * FROM USER WHERE user_id = ? `;
+    const values = [user_id];
+    try {
+        const [rows] = await pool.query(query, values);
+        console.log("getting user info from token - ",rows)
+        return rows[0];
+    } catch (error) {
+        // Handle error
+        console.error("Error executing query:", error);
+        throw error; // Rethrow the error or handle as appropriate
+    }
+
+}
+
 export async function finduser(email,password) {
     const query = `
         SELECT * FROM USER 
@@ -72,7 +88,7 @@ export async function finduserLogin(email) {
     try {
         const [rows] = await pool.query(query, values);
         // console.log(rows)
-        return rows[0].password;
+        return rows[0];
     } catch (error) {
         // Handle error
         console.error("Error executing query:", error);

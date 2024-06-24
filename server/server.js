@@ -21,8 +21,9 @@ app.use(cors({
 }));
 
 app.use(cookieParser())
+app.use("/api/v1/userinfo",userroutes)
 app.use("/server/stocks",stocksroutes)
-app.use("/server/users",userroutes)
+// app.use("/server/users",userroutes)
 app.use("/api/v1/user",authroutes)
 app.use("/server/watchlist",watchlistroutes)
 app.use("/server/stockbyid",userstocksroutes)
