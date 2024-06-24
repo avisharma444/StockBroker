@@ -1,0 +1,99 @@
+/* Dashboard.css */
+.DashboardContainer {
+  display: flex;
+  height: 100vh;
+  background-color: #f4f4f4;
+  padding: 20px;
+}
+
+.LeftBox, .RightBox {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 20px;
+  margin: 10px;
+  text-align: left;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.LeftBox {
+  flex: 1 1 35%; /* Flex basis to set the initial size to 35% */
+  max-width: 40%; /* Prevent it from growing beyond 40% */
+}
+
+.RightBox {
+  flex: 1 1 60%; /* Flex basis to set the initial size to 60% */
+  max-width: 65%; /* Prevent it from growing beyond 65% */
+}
+
+.LeftBox input {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 16px;
+}
+
+.Dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-top: none;
+  border-radius: 0 0 12px 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.DropdownItem {
+  padding: 10px;
+  cursor: pointer;
+}
+
+.DropdownItem:hover {
+  background-color: #f0f0f0;
+}
+
+.RightBox h1 {
+  margin-bottom: 20px;
+}
+
+.cards-container {
+  display: flex;
+  justify-content: space-between; /* Space out the cards evenly */
+}
+
+.cards {
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  width: 30%; /* Ensure the cards take up equal space */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.cards:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+.topic {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.money {
+  height: 50px;
+  width: 100%;
+  background-color: #eaeaea;
+  border-radius: 4px;
+}

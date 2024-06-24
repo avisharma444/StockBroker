@@ -27,13 +27,14 @@ app.use(cors({
     origin: "http://localhost:5173",credentials:true
 }));
 
-app.use(cookieParser());
-app.use("/server/stocks", stocksroutes);
-app.use("/server/users", userroutes);
-app.use("/api/v1/user", authroutes);
-app.use("/server/watchlist", watchlistroutes);
-app.use("/server/stockbyid", userstocksroutes);
-app.use("/server/order", orderroutes);
+app.use(cookieParser())
+app.use("/api/v1/userinfo",userroutes)
+app.use("/server/stocks",stocksroutes)
+// app.use("/server/users",userroutes)
+app.use("/api/v1/user",authroutes)
+app.use("/server/watchlist",watchlistroutes)
+app.use("/server/stockbyid",userstocksroutes)
+app.use("/server/order",orderroutes)
 
 app.get("/admin", async (req, res) => {
     console.log("reached admin");
