@@ -10,6 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@stripe/react-stripe-js": "^2.7.1",
+    "@stripe/stripe-js": "^4.0.0",
     "axios": "^1.7.2",
     "chart.js": "^4.4.3",
     "install": "^0.13.0",
@@ -17,7 +19,8 @@
     "react": "^18.2.0",
     "react-chartjs-2": "^5.2.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^6.23.1"
+    "react-router-dom": "^6.23.1",
+    "yahoo-finance2": "^2.11.2"
   },
   "devDependencies": {
     "@types/react": "^18.2.66",

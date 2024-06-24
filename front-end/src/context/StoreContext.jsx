@@ -15,7 +15,7 @@ const StoreContextProvider = (props) => {
         if(localStorage.getItem("token")){
             setToken(localStorage.getItem("token"))
         }
-    },[])
+    },[]) // only once
 
     return (
         <StoreContext.Provider value = {contextValue}>

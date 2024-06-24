@@ -34,10 +34,6 @@
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
-.stock-details {
-  margin-bottom: 20px;
-}
-
 .stock-symbol {
   font-size: 1.5em;
   font-weight: bold;
@@ -52,15 +48,11 @@
 .stock-price {
   font-size: 1.3em;
   color: #e76f51;
+  margin-bottom: 20px;
 }
 
-.chart-container {
-  margin-top: 40px;
-}
-
-.chart {
-  border: 1px solid #ddd;
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+.loading, .error {
+  text-align: center;
+  font-size: 1.5em;
+  color: #555;
 }

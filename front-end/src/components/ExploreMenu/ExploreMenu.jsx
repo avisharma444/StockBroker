@@ -12,6 +12,7 @@ const stockNames = {
   GOOGL: 'Alphabet Inc.',
   AMZN: 'Amazon.com Inc.',
   MSFT: 'Microsoft Corporation'
+  
 };
 
 const ExploreMenu = () => {

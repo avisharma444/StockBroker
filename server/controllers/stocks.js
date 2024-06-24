@@ -1,6 +1,8 @@
 import { get_stocks,get_stocks_by_id, orderItem } from "../database.js";
 import jwt from "jsonwebtoken";
 import { sellItem} from "../database.js";
+
+
 export const stocks = async (req,res)=>{
 
 
@@ -28,18 +30,20 @@ export const user_stocks = async (req,res)=>{
 }
 
 export const buy_stock = async (req, res) => {
+    console.log("from controlller - ")
     try {
         const quantity = await req.body.quantity;
         const stock_id = await req.body.stock_id;
         console.log("from controlller - ",quantity,stock_id)
         const token = req.cookies.accesstoken;
+        console.log("TOKEN IS",token)
+        //if (!token) {
+            //console.log("TOKEN NOT FOUND");
+           // return res.status(401).json("not logged in !");
+      //  }
 
-        if (!token) {
-            return res.status(401).json("not logged in !");
-        }
-
-        jwt.verify(token, "secretkey", async (err, userInfo) => {
-            if (err) {
+       jwt.verify(token, "secretkey", async (err, userInfo) => {
+         if (err) {
                 return res.status(403).json("invalid token");
             }
             
