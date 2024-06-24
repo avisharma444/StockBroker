@@ -20,7 +20,9 @@ export const register = async (req,res)=>{
     const name = req.body.name;
 
     try{
+
     const try_user =  await getuser(adhaar,PAN_card,phone_no,email)
+    console.log("HI",try_user)
     console.log("sdf",try_user)
     if(try_user.length == 0){
         console.log("empty ans")
@@ -40,9 +42,10 @@ export const register = async (req,res)=>{
     console.log("here - ",email,password,adhaar,PAN_card,name)
     // hashing user password
     const salt = await bcrypt.genSalt(10)
+    console.log("INSERTING");
     const hashed_pass = await bcrypt.hash(password,salt)
-
-    const inserting = insertuser(hashed_pass,adhaar,PAN_card,phone_no,email,dob,name)
+     
+    const inserting =await insertuser(hashed_pass,adhaar,PAN_card,phone_no,email,dob,name)
     const tuser = await finduser(email, password);
     const userid = tuser[0];
     const token = createToken(userid)
