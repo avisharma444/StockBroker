@@ -6,6 +6,7 @@ dotenv.config()
 export const pool = mysql.createPool({ 
     host : '127.0.0.1',
     user:'root',
+<<<<<<< HEAD
     password : '12345',
 =======
     password : '123456',
