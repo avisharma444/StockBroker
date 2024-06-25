@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 const stripePromise = loadStripe('pk_test_51PT5yj07MobmpSNsexeF8EVPVXpY0LmbEhd71qbJOmEQ95ynBrzG6VCs1JHksXAyCU3vXODchSs3gwoqy81KmMha003zLS5PWF');
 
 const PlaceOrder = () => {
-  const [inputs, setInputs] = useState({ stock_id: '', quantity: '' });
+  const [inputs, setInputs] = useState({ stock_id: '', quantity: ''});
   const [err, setErr] = useState(false);
   const navigate = useNavigate();
   const stripe = useStripe();
@@ -18,45 +18,49 @@ const PlaceOrder = () => {
   };
 
   const handleBuy = async (e) => {
-    e.preventDefault();
-    try {
-      const token = localStorage.getItem('token'); // Retrieve token from storage
-      const headers = {
-        Authorization: `Bearer ${token}`,
-      };
-      const res = await axios.post('http://localhost:8080/create-payment-intent', {
-        amount: inputs.quantity * 100,
-      }, { headers });
-      const clientSecret = res.data.clientSecret;
-      const result = await stripe.confirmCardPayment(clientSecret, {
-        payment_method: {
-          card: elements.getElement(CardElement),
-          billing_details: {
-            name: 'User Name',
-          },
+  e.preventDefault();
+  try {
+    const token = localStorage.getItem('token'); // Retrieve token from storage
+    const headers = {
+      Authorization: `Bearer ${token}`,
+    };
+
+    // Step 1: Create a payment intent
+    const res = await axios.post('http://localhost:8080/create-payment-intent', {
+      amount: inputs.quantity * 100,
+    }, { headers });
+
+    const clientSecret = res.data.clientSecret;
+
+    // Step 2: Confirm the payment
+    const result = await stripe.confirmCardPayment(clientSecret, {
+      payment_method: {
+        card: elements.getElement(CardElement),
+        billing_details: {
+          name: 'User Name',
         },
+      },
+    });
+
+    if (result.error) {
+      setErr(result.error.message);
+    } else if (result.paymentIntent.status === 'succeeded') {
+      console.log("GOOD");
+      console.log("TOKEN IS", token);
+
+      // Step 3: Place the order
+      await axios.post('http://localhost:8080/server/order/buy',  {
+        stock_id : inputs.stock_id ,
+        quantity: inputs.quantity,
+        token: token
       });
 
-      if (result.error) {
-        setErr(result.error.message);
-      } else if (result.paymentIntent.status === 'succeeded') {
-        console.log("GOOD");
-        // check the current cookies 
-        console.log("TOKEN IS", token);
-      //  await Cookies.set('accesstoken', token, { expires: 700000, sameSite: 'None', secure: true });
-        await axios.post('http://localhost:8080/server/order/buy', inputs,{
-          headers: {
-            'Authorization': `Bearer ${token}`
-          },
-          withCredentials: true
-        }
-        );
-        setErr('Transaction Successful');
-      }
-    } catch (err) {
-      setErr('Payment failed or other error');
+      setErr('Transaction Successful');
     }
-  };
+  } catch (err) {
+    setErr('Payment failed or other error');
+  }
+};
 
   return (
     <div className="buy-stocks-container" style={{ maxWidth: '400px', margin: 'auto', padding: '20px', border: '1px solid #ccc', borderRadius: '8px', boxShadow: '0 0 10px rgba(0,0,0,0.1)' }}>

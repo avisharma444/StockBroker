@@ -12,7 +12,7 @@ const StoreContextProvider = (props) => {
         console.log("Attempting to fetch user info with token:", token);
         try {
             const response = await axios.post(`${url}/api/v1/userinfo`, {
-                token: token // Send token in the body
+                token: token
             });
 
             if (response.status === 200) {

@@ -7,6 +7,9 @@ export const pool = mysql.createPool({
     host : '127.0.0.1',
     user:'root',
     password : '12345',
+=======
+    password : '123456',
+>>>>>>> f5ee40db570a7c1e658c0e40b89d2d273e1fd5e9
     database : 'zerodha'
 }).promise()
 
