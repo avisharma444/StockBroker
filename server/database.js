@@ -4,14 +4,10 @@ import dotenv from 'dotenv'
 dotenv.config()
 
 export const pool = mysql.createPool({ 
-    host : '127.0.0.1',
-    user:'root',
-<<<<<<< HEAD
-    password : '12345',
-=======
-    password : '123456',
->>>>>>> f5ee40db570a7c1e658c0e40b89d2d273e1fd5e9
-    database : 'zerodha'
+    host : process.env.MYSQL_HOST,
+    user: process.env.MYSQL_USER,
+    password : process.env.MYSQL_PASSWORD,
+    database : process.env.MYSQL_DATABASE
 }).promise()
 
 export async function get_admin_pass(){
