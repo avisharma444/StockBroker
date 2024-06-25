@@ -32,9 +32,10 @@ const Navbar = ({ setShowLogin }) => {
         setMenu(newMenu);
         if (newMenu === 'menu') {
             navigate('/order');
-        }
-        if (newMenu === 'home') {
+        } else if (newMenu === 'home') {
             navigate('/');
+        } else if (newMenu === 'sell') {
+            navigate('/sell');
         }
     };
 
@@ -43,7 +44,8 @@ const Navbar = ({ setShowLogin }) => {
             <img src='/logo.svg' alt="Logo" className="logo" />
             <ul className="navbar-menu">
                 <li onClick={() => handleMenuClick('home')} className={menu === 'home' ? 'active' : ''}>Home</li>
-                <li onClick={() => handleMenuClick('menu')} className={menu === 'menu' ? 'active' : ''}>Buy / Sell</li>
+                <li onClick={() => handleMenuClick('menu')} className={menu === 'menu' ? 'active' : ''}>Buy</li>
+                <li onClick={() => handleMenuClick('sell')} className={menu === 'sell' ? 'active' : ''}>Sell</li>
                 <li onClick={() => handleMenuClick('contact-us')} className={menu === 'contact-us' ? 'active' : ''}>Contact Us</li>
             </ul>
             {!token ? (

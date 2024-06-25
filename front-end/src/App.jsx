@@ -9,7 +9,7 @@ import Footer from './components/Footer/Footer';
 import ExploreMenu from './components/ExploreMenu/ExploreMenu';
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
 import Dashboard from './components/Dashboard/Dashboard';
-
+import SellOrder from './pages/SellOrder/SellOrder'
 const App = () => {
   const [showLogin, setShowLogin] = useState(false);
 
@@ -22,6 +22,7 @@ const App = () => {
           <Route path='/' element={<Home setShowLogin={setShowLogin} />} />
           <Route path='/cart' element={<Cart />} />
           <Route path='/order' element={<PlaceOrder />} />
+          <Route path='/sell' element={<SellOrder />} />
           <Route
             path='/explore'
             element={
