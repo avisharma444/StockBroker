@@ -4,10 +4,10 @@ import dotenv from 'dotenv'
 dotenv.config()
 
 export const pool = mysql.createPool({ 
-    host : '127.0.0.1',
-    user:'root',
-    password : '123456',
-    database : 'zerodha'
+    host : process.env.MYSQL_HOST,
+    user: process.env.MYSQL_USER,
+    password : process.env.MYSQL_PASSWORD,
+    database : process.env.MYSQL_DATABASE
 }).promise()
 
 export async function get_admin_pass(){
@@ -235,6 +235,20 @@ export async function sellItem(user_id, stock_id, quantity) {
         throw error;
     }
 }
+export async function getCompanies() {
+    console.log("getCompanies function called");
+    const query = `SELECT name FROM company`; 
+    try {
+      const [rows] = await pool.query(query);
+      console.log(rows)
+
+      return rows;
+    } catch (error) {
+      console.error("Error fetching companies from the database", error);
+      throw error;
+    }
+  }
+  
 // const ans = await get_loss_gain(1000);
 // const new_admin = await addAdmin("admin14","tp");
 

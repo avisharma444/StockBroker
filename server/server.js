@@ -9,12 +9,12 @@ import watchlistroutes from './routes/watchlist.js';
 import stocksroutes from './routes/stocks.js';
 import userstocksroutes from './routes/stockid.js';
 import orderroutes from './routes/order.js';
-import { addAdmin, get_loss_gain, get_admin_pass } from './database.js';
+import { addAdmin, get_loss_gain, get_admin_pass, getCompanies } from './database.js'; // Import the new function
 
 dotenv.config();
 
 const app = express();
-const stripe = new Stripe('sk_test_51PT5yj07MobmpSNs5EAJdraWi30umCVYNYeljsLjmVTIx11p89zL3RwLGuGFQlpFGa4ojQj23dY7CuRE8NoJGicD00Y1soKXB3');
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 // Enable CORS for all routes
 app.use((req, res, next) => {
@@ -24,17 +24,17 @@ app.use((req, res, next) => {
 
 app.use(express.json());
 app.use(cors({
-    origin: "http://localhost:5173",credentials:true
+    origin: "http://localhost:5173",
+    credentials: true
 }));
 
-app.use(cookieParser())
-app.use("/api/v1/userinfo",userroutes)
-app.use("/server/stocks",stocksroutes)
-// app.use("/server/users",userroutes)
-app.use("/api/v1/user",authroutes)
-app.use("/server/watchlist",watchlistroutes)
-app.use("/server/stockbyid",userstocksroutes)
-app.use("/server/order",orderroutes)
+app.use(cookieParser());
+app.use("/api/v1/userinfo", userroutes);
+app.use("/server/stocks", stocksroutes);
+app.use("/api/v1/user", authroutes);
+app.use("/server/watchlist", watchlistroutes);
+app.use("/server/stockbyid", userstocksroutes);
+app.use("/server/order", orderroutes);
 
 app.get("/admin", async (req, res) => {
     console.log("reached admin");
@@ -57,7 +57,6 @@ app.post("/admin", async (req, res) => {
 });
 
 app.post('/create-payment-intent', async (req, res) => {
-    // this just sends a secret key 
     const { amount } = req.body;
     const paymentIntent = await stripe.paymentIntents.create({
         amount: amount,
@@ -66,7 +65,15 @@ app.post('/create-payment-intent', async (req, res) => {
     res.send({
         clientSecret: paymentIntent.client_secret,
     });
-    
+});
+
+app.get('/api/companies', async (req, res) => {
+    try {
+        const companies = await getCompanies(); // This is where the getCompanies function is called
+        res.json(companies);
+    } catch (error) {
+        res.status(500).send('Server error');
+    }
 });
 
 app.use((err, req, res, next) => {
