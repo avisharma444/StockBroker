@@ -3,8 +3,6 @@ import axios from 'axios';
 import './Dashboard.css';
 
 const Dashboard = () => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [searchResults, setSearchResults] = useState([]);
   const [companies, setCompanies] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -17,7 +15,6 @@ const Dashboard = () => {
           console.log("No companies found");
         }
         setCompanies(response.data);
-        setSearchResults(response.data);
       } catch (error) {
         setError('Error fetching companies');
       } finally {
@@ -28,47 +25,24 @@ const Dashboard = () => {
     fetchCompanies();
   }, []);
 
-  const handleSearchChange = (event) => {
-    const searchTerm = event.target.value;
-    setSearchTerm(searchTerm);
-    setSearchResults(
-      companies.filter(company =>
-        company?.name?.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-    );
-  };
-
   return (
     <div className="DashboardContainer">
       <div className="LeftBox">
         <h1>Market Watch</h1>
-        <input
-          type="text"
-          placeholder="Search for Stocks here"
-          value={searchTerm}
-          onChange={handleSearchChange}
-        />
-        {searchTerm && (
-          <div className="Dropdown">
-            {searchResults.map((result, index) => (
-              <div key={index} className="DropdownItem">
-                {result.name}
-              </div>
-            ))}
-          </div>
-        )}
         <div className="CompanyList">
-          <h2>All Companies</h2>
           {loading ? (
             <div>Loading...</div>
           ) : error ? (
             <div>{error}</div>
           ) : (
-            companies.map((company, index) => (
-              <div key={index} className="CompanyItem">
-                {company.name}
-              </div>
-            ))
+            <div className="cards-container">
+              {companies.map((company, index) => (
+                <div key={index} className="cards">
+                  <div className="topic">{company.name}</div>
+                  <div className="money"></div>
+                </div>
+              ))}
+            </div>
           )}
         </div>
       </div>
@@ -95,4 +69,3 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
-``

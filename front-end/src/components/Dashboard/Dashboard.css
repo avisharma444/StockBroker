@@ -1,4 +1,5 @@
 /* Dashboard.css */
+
 .DashboardContainer {
   display: flex;
   height: 100vh;
@@ -15,16 +16,23 @@
   text-align: left;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  overflow-y: auto; /* Add scrollbar for overflow */
+  max-height: calc(100vh - 80px); /* Adjust max-height to fit within the viewport */
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 .LeftBox {
   flex: 1 1 35%; /* Flex basis to set the initial size to 35% */
   max-width: 40%; /* Prevent it from growing beyond 40% */
+  
 }
 
 .RightBox {
   flex: 1 1 60%; /* Flex basis to set the initial size to 60% */
-  max-width: 65%; /* Prevent it from growing beyond 65% */
+  max-width: 60%; /* Adjusted to prevent overflow */
+  overflow: hidden; /* Hide overflow to prevent scrollbars */
 }
 
 .LeftBox input {
@@ -66,7 +74,9 @@
 
 .cards-container {
   display: flex;
+  flex-wrap: wrap; /* Allow cards to wrap to the next line */
   justify-content: space-between; /* Space out the cards evenly */
+  gap: 20px; /* Gap between each card */
 }
 
 .cards {
@@ -74,17 +84,19 @@
   border: 1px solid #ddd;
   border-radius: 8px;
   padding: 20px;
-  width: 30%; /* Ensure the cards take up equal space */
+  width: calc(30% - 20px); /* Adjusted width calculation */
   display: flex;
   flex-direction: column;
   align-items: center;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
+
 .cards:hover {
   transform: translateY(-10px);
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
+
 .topic {
   font-size: 18px;
   font-weight: bold;
