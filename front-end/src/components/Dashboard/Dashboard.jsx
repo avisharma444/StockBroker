@@ -1,13 +1,41 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import './Dashboard.css';
 
 const Dashboard = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState([]);
+  const [companies, setCompanies] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchCompanies = async () => {
+      try {
+        const response = await axios.get('http://localhost:8080/api/companies');
+        if (response.data.length === 0) {
+          console.log("No companies found");
+        }
+        setCompanies(response.data);
+        setSearchResults(response.data);
+      } catch (error) {
+        setError('Error fetching companies');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCompanies();
+  }, []);
 
   const handleSearchChange = (event) => {
-    setSearchTerm(event.target.value);
-    setSearchResults(['Stock A', 'Stock B', 'Stock C'].filter(stock => stock.toLowerCase().includes(event.target.value.toLowerCase())));
+    const searchTerm = event.target.value;
+    setSearchTerm(searchTerm);
+    setSearchResults(
+      companies.filter(company =>
+        company?.name?.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    );
   };
 
   return (
@@ -24,11 +52,25 @@ const Dashboard = () => {
           <div className="Dropdown">
             {searchResults.map((result, index) => (
               <div key={index} className="DropdownItem">
-                {result}
+                {result.name}
               </div>
             ))}
           </div>
         )}
+        <div className="CompanyList">
+          <h2>All Companies</h2>
+          {loading ? (
+            <div>Loading...</div>
+          ) : error ? (
+            <div>{error}</div>
+          ) : (
+            companies.map((company, index) => (
+              <div key={index} className="CompanyItem">
+                {company.name}
+              </div>
+            ))
+          )}
+        </div>
       </div>
       <div className="RightBox">
         <h1>Welcome to Zerodha!</h1>
@@ -53,3 +95,4 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+``

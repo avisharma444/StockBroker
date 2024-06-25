@@ -6,7 +6,7 @@ dotenv.config()
 export const pool = mysql.createPool({ 
     host : '127.0.0.1',
     user:'root',
-    password : 'r2004',
+    password : '12345',
     database : 'zerodha'
 }).promise()
 
@@ -215,6 +215,20 @@ export async function sellItem(user_id, stock_id, quantity) {
         throw error;
     }
 }
+export async function getCompanies() {
+    console.log("getCompanies function called");
+    const query = `SELECT name FROM company`; 
+    try {
+      const [rows] = await pool.query(query);
+      console.log(rows)
+
+      return rows;
+    } catch (error) {
+      console.error("Error fetching companies from the database", error);
+      throw error;
+    }
+  }
+  
 // const ans = await get_loss_gain(1000);
 // const new_admin = await addAdmin("admin14","tp");
 
