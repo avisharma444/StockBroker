@@ -1,25 +1,36 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const { get_user_stock } = require("../database");
 
 const app = express();
 
 app.use(bodyParser.json());
 
-const TICKER = "GOOGLE";
+const TICKER = "GOOG"
+const users = get_user_stock_info()
 
-const users = [{
-  id: "1", 
-  balances: {
-    "GOOGLE": 10,       
-    "USD": 50000   
-  }
-}, {
-  id: "2",
-  balances: {
-    "GOOGLE": 10,
-    "USD": 50000
-  }
-}];
+// const users = [{
+//   id: "1", 
+//   balances: {
+//     "GOOGLE": 10,       
+//     "USD": 50000   
+//   }
+// }, {
+//   id: "2",
+//   balances: {
+//     "GOOGLE": 10,
+//     "USD": 50000
+//   }
+// }];
+
+function get_user_stock_info(){
+    const users = get_user_stock()
+    return users
+};
+function get_all_stocks(){
+  const stocks = get_user_stock()
+  return stocks
+};
 
 const bids = [];
 const asks = [];
@@ -59,7 +70,8 @@ app.post("/order", (req, res) => {
   });
 });
 
-app.get("/depth", (req, res) => {
+// app.get("/depth", (req, res) => {
+export const  GetDepth= async (req,res)=>{
   const depth = {};
 
   for (let i = 0; i < bids.length; i++) {
@@ -85,19 +97,14 @@ app.get("/depth", (req, res) => {
   }
 
   res.json({ depth });
-});
+};
 
-app.get("/balance/:userId", (req, res) => {
+// app.get("/balance/:userId", (req, res) => {
+export const getUserBalance = async (req,res)=>{
   const userId = req.params.userId;
   const user = users.find(x => x.id === userId);
-  if (!user) {
-    return res.json({
-      USD: 0,
-      [TICKER]: 0
-    });
-  }
   res.json({ balances: user.balances });
-});
+};
 
 app.get("/quote", (req, res) => {
   // TODO: Assignment
