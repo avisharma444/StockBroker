@@ -21,10 +21,11 @@ const App = () => {
         <Routes>
           <Route path='/' element={<Home setShowLogin={setShowLogin} />} />
           <Route path='/cart' element={<Cart />} />
-          <Route path='/order' element={<PlaceOrder />} />
-          <Route path='/sell' element={<SellOrder />} />
-          <Route
-            path='/explore'
+          <Route 
+          path='/order' 
+          element={<ProtectedRoute showLogin={showLogin}><PlaceOrder /></ProtectedRoute>} />
+          <Route path='/sell' element={<ProtectedRoute showLogin={showLogin}><SellOrder /></ProtectedRoute>} />
+          <Route path='/explore'
             element={
               <ProtectedRoute showLogin={showLogin}>
                 <Dashboard/>
