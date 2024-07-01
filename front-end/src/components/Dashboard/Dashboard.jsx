@@ -4,8 +4,12 @@ import './Dashboard.css';
 
 const Dashboard = () => {
   const [companies, setCompanies] = useState([]);
+  const [investment, setInvestment] = useState(0);
+  const [lossGain, setLossGain] = useState(0);
+  const [currentValue, setCurrentValue] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const userId = 1; // replace with actual user ID
 
   useEffect(() => {
     const fetchCompanies = async () => {
@@ -22,8 +26,24 @@ const Dashboard = () => {
       }
     };
 
+    const fetchUserData = async () => {
+      try {
+        const [investmentResponse, lossGainResponse, currentValueResponse] = await Promise.all([
+          axios.get(`http://localhost:8080/api/getInvestment?userId=${userId}`),
+          axios.get(`http://localhost:8080/api/getLossGain?userId=${userId}`),
+          axios.get(`http://localhost:8080/api/getCurrentValue?userId=${userId}`)
+        ]);
+        setInvestment(investmentResponse.data);
+        setLossGain(lossGainResponse.data);
+        setCurrentValue(currentValueResponse.data);
+      } catch (error) {
+        setError('Error fetching user data');
+      }
+    };
+
     fetchCompanies();
-  }, []);
+    fetchUserData();
+  }, [userId]);
 
   return (
     <div className="DashboardContainer">
@@ -50,19 +70,18 @@ const Dashboard = () => {
         <h1>Welcome to Zerodha!</h1>
         <div className="cards-container">
           <div className="cards">
-            <div className="topic">Equity</div>
-            <div className="money"></div>
+            <div className="topic">Current Value</div>
+            <div className="money">${currentValue}</div>
           </div>
           <div className="cards">
             <div className="topic">Profits</div>
-            <div className="money"></div>
+            <div className="money">${lossGain}</div>
           </div>
           <div className="cards">
-            <div className="topic">Portfolio</div>
-            <div className="money"></div>
+            <div className="topic">Invested</div>
+            <div className="money">${investment}</div>
           </div>
         </div>
-        {/* Add additional content here */}
       </div>
     </div>
   );

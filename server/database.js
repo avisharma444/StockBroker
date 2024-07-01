@@ -35,7 +35,7 @@ export async function getuser(aadhar, PAN_card, phone_no, email) {
 
     try {
         const [rows] = await pool.query(query, values);
-        console.log(rows)
+        // console.log(rows)
         return rows;
     } catch (error) {
         // Handle error
@@ -237,7 +237,7 @@ export async function getCompanies() {
     const query = `select * from assetownership as c natural join stock as s;`; 
     try {
       const [rows] = await pool.query(query);
-      console.log(rows);
+    //   console.log(rows);
 
       return rows;
     } catch (error) {
@@ -245,6 +245,68 @@ export async function getCompanies() {
       throw error;
     }
   }
+
+export async function getInvestment(user_id) {
+    console.log("in investment - ",user_id)
+    const query = `SELECT * FROM transactions WHERE user_id = ? and transaction_type = "buy"`;
+    const values = [user_id];
+    try {
+        const [rows] = await pool.query(query, values);
+        // return the sum of values of transaction_value*quantity
+        let sum = 0;
+        for (let i = 0; i < rows.length; i++) {
+            sum += rows[i].transaction_value*rows[i].quantity;
+        }
+        console.log("investment - ",sum)
+        return sum;
+    } catch (error) {
+        console.error("Error fetching investment details", error);
+        throw error;
+    }
+}
+
+export async function getLossGain(user_id) {
+    const query = `SELECT * FROM transactions WHERE user_id = ? and transaction_type = "sell"`;
+    const values = [user_id];
+    try {
+        const [rows] = await pool.query(query, values);
+        // return the sum of values of transaction_value*quantity
+        let sum = 0;
+        for (let i = 0; i < rows.length; i++) {
+            sum = sum + rows[i].transaction_value*rows[i].quantity;
+        }
+        const investment = await getInvestment(user_id);
+        const currentValue = await CurrentValue(user_id);
+
+        // Calculate the final sum
+        sum = sum - investment + currentValue;
+        return sum;
+    } catch (error) {
+        console.error("Error fetching investment details", error);
+        throw error;
+    }
+
+}
+
+export async function CurrentValue(user_id) {
+    const query = `SELECT portfolio.stock_id,current_price, 
+portfolio.quantity AS portfolio_quantity  FROM portfolio inner join
+ stock on portfolio.stock_id = stock.stock_id where user_id = ?;`;
+    const values = [user_id];
+    try {
+        const [rows] = await pool.query(query, values);
+        // return the sum of values of transaction_value*quantity
+        let sum = 0;
+        for (let i = 0; i < rows.length; i++) {
+            sum += rows[i].current_price*rows[i].portfolio_quantity;
+        }
+        console.log("current value - ",sum)
+        return sum;
+    } catch (error) {
+        console.error("Error fetching investment details", error);
+        throw error;
+    }
+}
   
 // const ans = await get_loss_gain(1000);
 // const new_admin = await addAdmin("admin14","tp");

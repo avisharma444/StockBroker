@@ -9,6 +9,7 @@ import watchlistroutes from './routes/watchlist.js';
 import stocksroutes from './routes/stocks.js';
 import userstocksroutes from './routes/stockid.js';
 import orderroutes from './routes/order.js';
+import { getInvestment, getLossGain, CurrentValue } from './database.js'; // Import the new function
 import { addAdmin, get_loss_gain, get_admin_pass, getCompanies } from './database.js'; // Import the new function
 
 dotenv.config();
@@ -83,4 +84,35 @@ app.use((err, req, res, next) => {
 
 app.listen(8080, () => {
     console.log("server started running at port 8080");
+});
+
+
+app.get('/api/getInvestment', async (req, res) => {
+    const userId = req.query.userId;
+    try {
+        const investment = await getInvestment(userId);
+        res.json(investment);
+    } catch (error) {
+        res.status(500).send('Server error');
+    }
+});
+
+app.get('/api/getLossGain', async (req, res) => {
+    const userId = req.query.userId;
+    try {
+        const lossGain = await getLossGain(userId);
+        res.json(lossGain);
+    } catch (error) {
+        res.status(500).send('Server error');
+    }
+});
+
+app.get('/api/getCurrentValue', async (req, res) => {
+    const userId = req.query.userId;
+    try {
+        const currentValue = await CurrentValue(userId);
+        res.json(currentValue);
+    } catch (error) {
+        res.status(500).send('Server error');
+    }
 });
