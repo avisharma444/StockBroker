@@ -39,7 +39,7 @@ const Dashboard = () => {
               {companies.map((company, index) => (
                 <div key={index} className="cards">
                   <div className="topic">{company.name}</div>
-                  <div className="money"></div>
+                  <div className="money">${company.current_price}</div>
                 </div>
               ))}
             </div>

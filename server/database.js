@@ -234,10 +234,10 @@ export async function sellItem(user_id, stock_id, quantity) {
 }
 export async function getCompanies() {
     console.log("getCompanies function called");
-    const query = `SELECT name FROM company`; 
+    const query = `select * from company as c join stock as s;`; 
     try {
       const [rows] = await pool.query(query);
-      console.log(rows)
+      console.log(rows[0])
 
       return rows;
     } catch (error) {
