@@ -9,8 +9,8 @@ import watchlistroutes from './routes/watchlist.js';
 import stocksroutes from './routes/stocks.js';
 import userstocksroutes from './routes/stockid.js';
 import orderroutes from './routes/order.js';
-import { addAdmin, get_loss_gain, get_admin_pass, getCompanies } from './database.js'; // Import the new function
-
+import { addAdmin, get_loss_gain, get_admin_pass, getCompanies,get_specific_stock } from './database.js'; // Import the new function
+import { order_endpoint } from './OrderBook/OrderBook.js';
 dotenv.config();
 
 const app = express();
@@ -76,6 +76,20 @@ app.get('/api/companies', async (req, res) => {
     }
 });
 
+app.post('/order', order_endpoint);
+
+// endpoint to get a specific price from the backend
+app.post('/getPrice',async(req,res)=>{
+    try{
+             const stockInfo = await get_specific_stock(req.body.stock_id);
+              res.json(stockInfo);
+               
+    }
+    catch(err){
+        console.error('Error fetching stock information:', error);
+        res.status(500).json({ message: 'Could not fetch stock information', error: error.message });
+    }
+    });
 app.use((err, req, res, next) => {
     console.log(err.stack);
     res.status(500).send('fault');

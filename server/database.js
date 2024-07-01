@@ -137,7 +137,22 @@ export async function get_watchlist(user_id) {
         throw error; // Rethrow the error or handle as appropriate
     }
 }
-
+export async function get_specific_stock(stock_id){
+                const query = `
+                 select S.STOCK_ID,S.CURRENT_PRICE,S.LAST_TRADED_PRICE,C.COMPANY_NAME FROM STOCK AS S JOIN ASSETOWNERSHIP AS C ON (S.STOCK_ID = C.STOCK_ID) WHERE S.STOCK_ID=?`;
+             console.log("in stocks2 : ")
+             const values = [stock_id];
+             
+             try {
+                 const [rows] = await pool.query(query, values); // execute the query 
+                 console.log(rows)
+                 return rows;
+             } catch (error) {
+                 // Handle error
+                 console.error("Could not fetch stocks", error);
+                 throw error; // Rethrow the error or handle as appropriate
+             }
+}
 export async function get_stocks() {
     
     const query = `

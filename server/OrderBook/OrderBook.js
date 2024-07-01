@@ -1,9 +1,9 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const { get_user_stock } = require("../database");
-
+const binaryHeap = require("binary-heap");;
 const app = express();
-
+const comparator = (a, b) => a.price - b.price;
 app.use(bodyParser.json());
 
 const TICKER = "GOOG"
@@ -35,8 +35,8 @@ function get_all_stocks(){
 const bids = [];
 const asks = [];
 
-// Place a limit order
-app.post("/order", (req, res) => {
+// Place a limit order, this function is the endpoint of /server/order
+export const order_endpoint = async (req, res) => {
   const side = req.body.side;
   const price = req.body.price;
   const quantity = req.body.quantity;
@@ -56,6 +56,7 @@ app.post("/order", (req, res) => {
       quantity: remainingQty
     });
     bids.sort((a, b) => a.price < b.price ? -1 : 1);
+
   } else {
     asks.push({
       userId,
@@ -68,7 +69,7 @@ app.post("/order", (req, res) => {
   res.json({
     filledQuantity: quantity - remainingQty,
   });
-});
+};
 
 // app.get("/depth", (req, res) => {
 export const  GetDepth= async (req,res)=>{
@@ -95,7 +96,7 @@ export const  GetDepth= async (req,res)=>{
       depth[asks[i].price].quantity += asks[i].quantity;
     }
   }
-
+   
   res.json({ depth });
 };
 
@@ -131,11 +132,11 @@ function fillOrders(side, price, quantity, userId) {
       }
       if (asks[i].quantity > remainingQuantity) {
         asks[i].quantity -= remainingQuantity;
-        flipBalance(asks[i].userId, userId, remainingQuantity, asks[i].price);
+        //flipBalance(asks[i].userId, userId, remainingQuantity, asks[i].price);
         return 0;
       } else {
         remainingQuantity -= asks[i].quantity;
-        flipBalance(asks[i].userId, userId, asks[i].quantity, asks[i].price);
+       // flipBalance(asks[i].userId, userId, asks[i].quantity, asks[i].price);
         asks.pop();
       }
     }
@@ -146,11 +147,11 @@ function fillOrders(side, price, quantity, userId) {
       }
       if (bids[i].quantity > remainingQuantity) {
         bids[i].quantity -= remainingQuantity;
-        flipBalance(userId, bids[i].userId, remainingQuantity, price);
+        //flipBalance(userId, bids[i].userId, remainingQuantity, price);
         return 0;
       } else {
         remainingQuantity -= bids[i].quantity;
-        flipBalance(userId, bids[i].userId, bids[i].quantity, price);
+       // flipBalance(userId, bids[i].userId, bids[i].quantity, price);
         bids.pop();
       }
     }

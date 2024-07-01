@@ -1,13 +1,13 @@
 import React, { useState, createContext, useEffect } from 'react';
 import axios from "axios";
 
-export const StoreContext = createContext(null);
+export const StoreContext = createContext(null); // creates a context
 
 const StoreContextProvider = (props) => {
     const url = "http://localhost:8080";
     const [token, setToken] = useState("");
     const [user, setUser] = useState(null);
-
+    // send the input as token , return an object of user 
     const fetchUserInfo = async (token) => {
         console.log("Attempting to fetch user info with token:", token);
         try {

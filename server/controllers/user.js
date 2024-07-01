@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
 import { getuserinfo } from '../database.js';
 
+//  function to return the info for user , takes in input only the token 
 export const get_user_info = async (req, res) => {
     const { token } = req.body; // Extract token from request body
     console.log("Received token:", token);

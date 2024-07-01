@@ -3,7 +3,8 @@ import { loadStripe } from '@stripe/stripe-js';
 import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-
+import { StoreContext } from '../../context/StoreContext';
+import { get_stocks } from '../../../../server/database';
 const stripePromise = loadStripe('pk_test_51PT5yj07MobmpSNsexeF8EVPVXpY0LmbEhd71qbJOmEQ95ynBrzG6VCs1JHksXAyCU3vXODchSs3gwoqy81KmMha003zLS5PWF');
 
 const PlaceOrder = () => {
@@ -13,7 +14,9 @@ const PlaceOrder = () => {
   const navigate = useNavigate();
   const stripe = useStripe();
   const elements = useElements();
-
+  const { url, setToken, fetchUserInfo } = useContext(StoreContext);
+  const token1 = localStorage.getItem('token');
+  const userDetails= fetchUserInfo(token1);
   const handleChange = (e) => {
     setInputs((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
@@ -48,14 +51,23 @@ const PlaceOrder = () => {
       } else if (result.paymentIntent.status === 'succeeded') {
         console.log("GOOD");
         console.log("TOKEN IS", token);
+        // now first fetch the price of the stock from the database 
+        const response = await axios.post('http://localhost:8080/server/getPrice',{
+                 stock_id : inputs.stock_id,
 
-        // Step 3: Place the order
-        await axios.post('http://localhost:8080/server/order/buy', {
+        });
+      const price = response.data[0].price;
+
+      /*update the price on the frontend*/
+          // now send a post request to update the orderbook when buying a stock
+        await axios.post('http://localhost:8080/server/order', {
           stock_id: inputs.stock_id,
           quantity: inputs.quantity,
-          token: token
+          token: token,
+          side:"bid",
+          price: price,
+          userId: userDetails.user_id
         });
-
         setErr('Transaction Successful');
       }
     } catch (err) {
