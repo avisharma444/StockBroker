@@ -1,15 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import './Dashboard.css';
+import { StoreContext } from '../../context/StoreContext';
 
 const Dashboard = () => {
+  const { user } = useContext(StoreContext); // Get user info from context
+  const userId = user?.user_id; // Access user_id from user context
   const [companies, setCompanies] = useState([]);
   const [investment, setInvestment] = useState(0);
   const [lossGain, setLossGain] = useState(0);
   const [currentValue, setCurrentValue] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const userId = 1; // replace with actual user ID
 
   useEffect(() => {
     const fetchCompanies = async () => {
@@ -36,13 +38,16 @@ const Dashboard = () => {
         setInvestment(investmentResponse.data);
         setLossGain(lossGainResponse.data);
         setCurrentValue(currentValueResponse.data);
+        console.log(userId)
       } catch (error) {
         setError('Error fetching user data');
       }
     };
 
-    fetchCompanies();
-    fetchUserData();
+    if (userId) {
+      fetchCompanies();
+      fetchUserData();
+    }
   }, [userId]);
 
   return (
@@ -86,5 +91,4 @@ const Dashboard = () => {
     </div>
   );
 };
-
 export default Dashboard;
