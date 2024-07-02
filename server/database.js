@@ -80,8 +80,11 @@ export async function finduser(email,password) {
 }
 export const finduserLogin = async (email) => {
     try {
-        
-        const [rows] = await pool.query(query, params);
+        const query = `
+        SELECT * FROM USER WHERE email = ?`;
+    
+        const values = [email];
+        const [rows] = await pool.query(query, values);
         if (rows.length > 0) {
             return rows[0];
         } else {

@@ -1,14 +1,10 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const { get_user_stock } = require("../database");
-
 const app = express();
-
 app.use(bodyParser.json());
-
 const TICKER = "GOOG"
 const users = get_user_stock_info()
-
 // const users = [{
 //   id: "1", 
 //   balances: {
@@ -22,7 +18,6 @@ const users = get_user_stock_info()
 //     "USD": 50000
 //   }
 // }];
-
 function get_user_stock_info(){
     const users = get_user_stock()
     return users
@@ -31,24 +26,19 @@ function get_all_stocks(){
   const stocks = get_user_stock()
   return stocks
 };
-
 const bids = [];
 const asks = [];
-
 // Place a limit order
 app.post("/order", (req, res) => {
   const side = req.body.side;
   const price = req.body.price;
   const quantity = req.body.quantity;
   const userId = req.body.userId;
-
   const remainingQty = fillOrders(side, price, quantity, userId);
-
   if (remainingQty === 0) {
     res.json({ filledQuantity: quantity });
     return;
   }
-
   if (side === "bid") {
     bids.push({
       userId,
@@ -64,16 +54,13 @@ app.post("/order", (req, res) => {
     })
     asks.sort((a, b) => a.price < b.price ? 1 : -1);
   }
-
   res.json({
     filledQuantity: quantity - remainingQty,
   });
 });
-
 // app.get("/depth", (req, res) => {
 export const  GetDepth= async (req,res)=>{
   const depth = {};
-
   for (let i = 0; i < bids.length; i++) {
     if (!depth[bids[i].price]) {
       depth[bids[i].price] = {
@@ -84,7 +71,6 @@ export const  GetDepth= async (req,res)=>{
       depth[bids[i].price].quantity += bids[i].quantity;
     }
   }
-
   for (let i = 0; i < asks.length; i++) {
     if (!depth[asks[i].price]) {
       depth[asks[i].price] = {
@@ -95,21 +81,22 @@ export const  GetDepth= async (req,res)=>{
       depth[asks[i].price].quantity += asks[i].quantity;
     }
   }
-
   res.json({ depth });
 };
-
 // app.get("/balance/:userId", (req, res) => {
 export const getUserBalance = async (req,res)=>{
   const userId = req.params.userId;
   const user = users.find(x => x.id === userId);
   res.json({ balances: user.balances });
 };
-
 app.get("/quote", (req, res) => {
   // TODO: Assignment
 });
-
+export const UpdateUserBalance = async (req,res)=>{
+  const userId = req.params.userId;
+  const user = users.find(x => x.id === userId);
+  res.json({ balances: user.balances });
+};
 function flipBalance(userId1, userId2, quantity, price) {
   let user1 = users.find(x => x.id === userId1);
   let user2 = users.find(x => x.id === userId2);
@@ -121,7 +108,6 @@ function flipBalance(userId1, userId2, quantity, price) {
   user1.balances["USD"] += (quantity * price);
   user2.balances["USD"] -= (quantity * price);
 }
-
 function fillOrders(side, price, quantity, userId) {
   let remainingQuantity = quantity;
   if (side === "bid") {
@@ -155,8 +141,6 @@ function fillOrders(side, price, quantity, userId) {
       }
     }
   }
-
   return remainingQuantity;
 }
-
 module.exports = { app };
