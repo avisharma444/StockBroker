@@ -59,30 +59,36 @@ export const login = async (req, res) => {
     console.log("in login");
     const email = req.body.email;
     const password = req.body.password;
-    
+    console.log("Received email:", email);
+    console.log("Received password:", password);
+
     try {
         const try_user = await finduserLogin(email);
-        // console.log(try_user);
+        console.log("User found:", try_user);
         
         if (try_user == null) {
-            return res.status(404).json({success:false,message:"email/password is not correct"});
+            console.log("email/password is not correct");
+            return res.status(404).json({ success: false, message: "email/password is not correct" });
         }
         
-        const real_pass = try_user.password
-        // console.log(try_user.password,try_user)
+        const real_pass = try_user.password;
+        console.log("User password from DB:", real_pass);
 
-        const isMatch = await bcrypt.compare(password,real_pass)
-        if(!isMatch){return res.json({success:false,message:"Invalid Credentials"})}
+        const isMatch = await bcrypt.compare(password, real_pass);
+        if (!isMatch) {
+            console.log("Invalid Credentials");
+            return res.json({ success: false, message: "Invalid Credentials" });
+        }
 
         const uid = try_user.user_id;
-        // console.log("creating token with user id - ",uid);
-        const token = createToken(uid)
-        // console.log("created token - ",uid);
-        res.json({success:true,token:token})
+        console.log("Creating token with user id:", uid);
+        const token = createToken(uid);
+        console.log("Created token:", token);
+        res.json({ success: true, token: token });
 
     } catch (error) {
         console.error("Error in login:", error);
-        return res.status(500).json("Cant Find Username or password");
+        return res.status(500).json({ success: false, message: "Can't Find Username or password" });
     }
 };
 export const logout = (req,res)=>{

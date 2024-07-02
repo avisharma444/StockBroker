@@ -98,3 +98,4 @@ typings/
 # Temporary folders
 tmp/
 temp/
+server/.env

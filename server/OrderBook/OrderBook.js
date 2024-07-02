@@ -110,7 +110,11 @@ export const getUserBalance = async (req,res)=>{
 app.get("/quote", (req, res) => {
   // TODO: Assignment
 });
-
+export const UpdateUserBalance = async (req,res)=>{
+  const userId = req.params.userId;
+  const user = users.find(x => x.id === userId);
+  res.json({ balances: user.balances });
+};
 function flipBalance(userId1, userId2, quantity, price) {
   let user1 = users.find(x => x.id === userId1);
   let user2 = users.find(x => x.id === userId2);
