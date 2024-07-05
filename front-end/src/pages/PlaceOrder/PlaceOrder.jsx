@@ -1,15 +1,21 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { StoreContext } from '../../context/StoreContext';
 
 const stripePromise = loadStripe('pk_test_51PT5yj07MobmpSNsexeF8EVPVXpY0LmbEhd71qbJOmEQ95ynBrzG6VCs1JHksXAyCU3vXODchSs3gwoqy81KmMha003zLS5PWF');
 
 const PlaceOrder = () => {
+  const {user_info} = useContext(StoreContext);
   const [inputs, setInputs] = useState({ stock_id: '', quantity: '' });
   const [err, setErr] = useState(false);
-  const [quote, setQuote] = useState(null);
+  const [quote, setQuote] = useState({
+    companyName: '',
+    price: 0,
+    quantity: 0
+});
   const navigate = useNavigate();
   const stripe = useStripe();
   const elements = useElements();
@@ -48,12 +54,18 @@ const PlaceOrder = () => {
       } else if (result.paymentIntent.status === 'succeeded') {
         console.log("GOOD");
         console.log("TOKEN IS", token);
-
+        console.log(user_info)
         // Step 3: Place the order
-        await axios.post('http://localhost:8080/server/order/buy', {
+        const user_id = user_info.user_id
+        console.log("USER ID-",user_id);
+        console.log("stock-id",stock_id);
+        console.log("quantity",inputs.quantity);
+        const res =  await axios.post('http://localhost:8080/server/order/buy', {
+          side : "bid",
           stock_id: inputs.stock_id,
+          price : 0,
           quantity: inputs.quantity,
-          token: token
+          user_id: user_id
         });
 
         setErr('Transaction Successful');
@@ -66,20 +78,19 @@ const PlaceOrder = () => {
   const handleGetQuote = async (e) => {
     e.preventDefault();
     try {
-      // Define the logic for getting the quote here
-      const res = await axios.get(`http://localhost:8080/quote?stock_id=${inputs.stock_id}`);
-      console.log('Quote:', res.data);
-      setQuote({
-        companyName: res.data.companyName,
-        price: res.data.price,
-        stockName: res.data.stockName,
-        quantity: inputs.quantity,
-      });
-      setErr(false);
+        // Define the logic for getting the quote here
+        const res = await axios.post(`http://localhost:8080/server/order/quote?stock_id=${inputs.stock_id}&quantity=${inputs.quantity}`);      
+        console.log('Quote:', res.data);
+        setQuote({
+            companyName: res.data.company_name,
+            price: res.data.price,
+            quantity: inputs.quantity,
+        });
+        setErr(false);
     } catch (err) {
-      setErr('Failed to get quote');
+        setErr('Failed to get quote');
     }
-  };
+};
 
   return (
     <div className="buy-stocks-container" style={{ maxWidth: '400px', margin: 'auto', padding: '20px', border: '1px solid #ccc', borderRadius: '8px', boxShadow: '0 0 10px rgba(0,0,0,0.1)' }}>
@@ -112,7 +123,7 @@ const PlaceOrder = () => {
         <div className="quote-container" style={{ marginTop: '20px', padding: '20px', border: '1px solid #ccc', borderRadius: '8px', boxShadow: '0 0 10px rgba(0,0,0,0.1)' }}>
           <h3 style={{ textAlign: 'center', marginBottom: '10px', fontSize: '1.25rem' }}>Quote Details</h3>
           <p><strong>Company Name:</strong> {quote.companyName}</p>
-          <p><strong>Stock Name:</strong> {quote.stockName}</p>
+          {/* <p><strong>Stock Name:</strong> {quote.stockName}</p> */}
           <p><strong>Quote Price:</strong> {quote.price}</p>
           <p><strong>Quantity:</strong> {quote.quantity}</p>
         </div>

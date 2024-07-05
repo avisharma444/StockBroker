@@ -61,6 +61,48 @@ export async function getuserinfo(user_id) {
 
 }
 
+export async function flip_db_balance(user1, user2, stock_id, price, quantity) {
+    try {
+        // Retrieve stock information
+        const stock_info = await find_specific_stock(stock_id);
+        const ticker = stock_info.symbol;
+
+        // Query to fetch balances for both users
+        const query1 = `SELECT balance FROM USER WHERE user_id = ?`;
+        const [balance1] = await pool.query(query1, [user1]);
+        const [balance2] = await pool.query(query1, [user2]);
+
+        // Query to fetch stock holdings for both users
+        const query3 = `SELECT ${ticker} FROM userstock WHERE user_id = ?`;
+        const [stocks1] = await pool.query(query3, [user1]);
+        const [stocks2] = await pool.query(query3, [user2]);
+
+        // Calculate new balances and stock holdings
+        const newStocks1 = stocks1 - quantity;
+        const newStocks2 = stocks2 + quantity;
+        const newValue1 = balance1 + (quantity * price);
+        const newValue2 = balance2 - (quantity * price);
+
+        // Update queries to update balances and stock holdings
+        const updateQuery1 = `UPDATE USER SET balance = ? WHERE user_id = ?`;
+        await pool.query(updateQuery1, [newValue1, user1]);
+
+        const updateQuery2 = `UPDATE USER SET balance = ? WHERE user_id = ?`;
+        await pool.query(updateQuery2, [newValue2, user2]);
+
+        const updateQuery3 = `UPDATE userstock SET ${ticker} = ? WHERE user_id = ?`;
+        await pool.query(updateQuery3, [newStocks1, user1]);
+
+        const updateQuery4 = `UPDATE userstock SET ${ticker} = ? WHERE user_id = ?`;
+        await pool.query(updateQuery4, [newStocks2, user2]);
+
+        // Optionally return something meaningful upon success
+        return { success: true, message: 'Transaction completed successfully' };
+    } catch (error) {
+        console.error('Error executing transaction:', error);
+        throw error; // Propagate the error upwards
+    }
+}
 export async function finduser(email,password) {
     const query = `
         SELECT * FROM USER 
@@ -291,6 +333,19 @@ export async function getLossGain(user_id) {
 
 }
 
+export async function find_specific_stock(stock_id){
+    const query = `SELECT * FROM stock WHERE stock_id = ?`;
+    const values = [stock_id];
+    try {
+        const [rows] = await pool.query(query, values);
+        console.log("specific stock = ", rows)
+        return rows;
+
+    } catch (error) {
+        console.error("Error fetching investment details", error);
+        throw error;
+    }
+}
 export async function CurrentValue(user_id) {
     const query = `SELECT portfolio.stock_id,current_price, 
 portfolio.quantity AS portfolio_quantity  FROM portfolio inner join

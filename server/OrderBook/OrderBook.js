@@ -1,6 +1,8 @@
-const express = require("express");
-const bodyParser = require("body-parser");
-const { get_user_stock } = require("../database");
+import express from 'express';
+import bodyParser from 'body-parser';
+import { get_user_stock, find_specific_stock, flip_db_balance } from '../database.js';
+import { bids, asks } from '../server.js';
+
 const app = express();
 app.use(bodyParser.json());
 const TICKER = "GOOG"
@@ -18,6 +20,10 @@ const users = get_user_stock_info()
 //     "USD": 50000
 //   }
 // }];
+// export async function give_quote(stock_id){
+//   stock_info = find_specific_stock(stock_id);
+//   return stock_info;
+// }
 function get_user_stock_info(){
     const users = get_user_stock()
     return users
@@ -26,14 +32,68 @@ function get_all_stocks(){
   const stocks = get_user_stock()
   return stocks
 };
-const bids = [];
-const asks = [];
-// Place a limit order
-app.post("/order", (req, res) => {
+export const give_quote = async (req,res)=> {
+    const stock_id = req.query.stock_id;
+    const number = req.query.quantity;
+    const requestedQuantity = number; // Quantity of stocks requested by the user
+    const stock_info = await find_specific_stock(stock_id);
+    const stock_symbol = stock_info[0].symbol;
+
+    // Calculate the average price for the requested quantity
+    let remainingQty = requestedQuantity;
+    let totalPrice = 0;
+    let count = 0;
+
+    // Iterate through the asks array to ca lculate the average price
+    for (let i = 0; i < asks.length; i++) {
+        if (asks[i].quantity >= remainingQty) {
+            totalPrice += remainingQty * asks[i].price;
+            count += remainingQty;
+            remainingQty = 0;
+            break;
+        } else {
+            totalPrice += asks[i].quantity * asks[i].price;
+            count += asks[i].quantity;
+            remainingQty -= asks[i].quantity;
+        }
+    }
+
+    // If the requested quantity is not fulfilled by asks, check bids for the remaining quantity
+    if (remainingQty > 0) {
+        for (let i = 0; i < bids.length; i++) {
+            if (bids[i].quantity >= remainingQty) {
+                totalPrice += remainingQty * bids[i].price;
+                count += remainingQty;
+                remainingQty = 0;
+                break;
+            } else {
+                totalPrice += bids[i].quantity * bids[i].price;
+                count += bids[i].quantity;
+                remainingQty -= bids[i].quantity;
+            }
+        }
+    }
+
+    if (count === 0) {
+        return { success: false, message: 'Quote not possible for the requested quantity' };
+    }
+
+    const averagePrice = totalPrice / count;
+    console.log("quote - ", averagePrice, count, stock_symbol);
+    return res.json({ price: averagePrice, quantity: count, company_name: stock_symbol });
+}
+// export function get_quote(req,res){
+
+// } 
+export const placeorder = async (req,res)=> {
+  console.log("HI")
   const side = req.body.side;
+  const stock_id = req.body.stock_id;
   const price = req.body.price;
   const quantity = req.body.quantity;
-  const userId = req.body.userId;
+  const userId = req.body.user_id;
+  console.log("HI");
+  // const stock_info = get_speci
   const remainingQty = fillOrders(side, price, quantity, userId);
   if (remainingQty === 0) {
     res.json({ filledQuantity: quantity });
@@ -54,10 +114,10 @@ app.post("/order", (req, res) => {
     })
     asks.sort((a, b) => a.price < b.price ? 1 : -1);
   }
-  res.json({
+  res.status(200).json({
     filledQuantity: quantity - remainingQty,
   });
-});
+};
 // app.get("/depth", (req, res) => {
 export const  GetDepth= async (req,res)=>{
   const depth = {};
@@ -97,16 +157,18 @@ export const UpdateUserBalance = async (req,res)=>{
   const user = users.find(x => x.id === userId);
   res.json({ balances: user.balances });
 };
-function flipBalance(userId1, userId2, quantity, price) {
-  let user1 = users.find(x => x.id === userId1);
-  let user2 = users.find(x => x.id === userId2);
-  if (!user1 || !user2) {
-    return;
-  }
-  user1.balances[TICKER] -= quantity;
-  user2.balances[TICKER] += quantity;
-  user1.balances["USD"] += (quantity * price);
-  user2.balances["USD"] -= (quantity * price);
+
+async function flipBalance(userId1, userId2, quantity, price,stock_id) {
+  // let user1 = users.find(x => x.id === userId1);
+  // let user2 = users.find(x => x.id === userId2);
+  // if (!user1 || !user2) {
+  //   return;
+  // }
+  const ans = await flip_db_balance(userId1,userId2,stock_id,price,quantity);
+  // user1.balances[TICKER] -= quantity;
+  // user2.balances[TICKER] += quantity;
+  // user1.balances["USD"] += (quantity * price);
+  // user2.balances["USD"] -= (quantity * price);
 }
 function fillOrders(side, price, quantity, userId) {
   let remainingQuantity = quantity;
@@ -143,4 +205,4 @@ function fillOrders(side, price, quantity, userId) {
   }
   return remainingQuantity;
 }
-module.exports = { app };
+// export { app };
