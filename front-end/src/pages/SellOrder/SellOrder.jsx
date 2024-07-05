@@ -1,121 +1,159 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { StoreContext } from '../../context/StoreContext';
+import './SellOrder.css';  // Import the CSS file
 
 const stripePromise = loadStripe('pk_test_51PT5yj07MobmpSNsexeF8EVPVXpY0LmbEhd71qbJOmEQ95ynBrzG6VCs1JHksXAyCU3vXODchSs3gwoqy81KmMha003zLS5PWF');
 
-const SellOrder = () => {
+const stockNameToId = {
+  GOOG: 1,
+  APPL: 2,
+  INFY: 3,
+  MSFT: 4,
+  GS: 5
+};
+
+const PlaceOrder = () => {
+  const { user } = useContext(StoreContext);
   const [inputs, setInputs] = useState({ stock_id: '', quantity: '' });
   const [err, setErr] = useState(false);
-  const [quote, setQuote] = useState(null);
+  const [quote, setQuote] = useState(null); // Changed to null initially  
   const navigate = useNavigate();
   const stripe = useStripe();
   const elements = useElements();
+  const [showBuyButton, setShowBuyButton] = useState(false); // State to toggle buy button visibility
 
   const handleChange = (e) => {
-    setInputs((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-  };
-
-  const handleBuy = async (e) => {
-    e.preventDefault();
-    try {
-      const token = localStorage.getItem('token'); // Retrieve token from storage
-      const headers = {
-        Authorization: `Bearer ${token}`,
-      };
-
-      // Step 1: Create a payment intent
-      const res = await axios.post('http://localhost:8080/create-payment-intent', {
-        amount: inputs.quantity * 100,
-      }, { headers });
-
-      const clientSecret = res.data.clientSecret;
-
-      // Step 2: Confirm the payment
-      const result = await stripe.confirmCardPayment(clientSecret, {
-        payment_method: {
-          card: elements.getElement(CardElement),
-          billing_details: {
-            name: 'User Name',
-          },
-        },
-      });
-
-      if (result.error) {
-        setErr(result.error.message);
-      } else if (result.paymentIntent.status === 'succeeded') {
-        console.log("GOOD");
-        console.log("TOKEN IS", token);
-
-        // Step 3: Place the order
-        await axios.post('http://localhost:8080/server/order/buy', {
-          stock_id: inputs.stock_id,
-          quantity: inputs.quantity,
-          token: token
-        });
-
-        setErr('Transaction Successful');
-      }
-    } catch (err) {
-      setErr('Payment failed or other error');
-    }
+    const { name, value } = e.target;
+    setInputs((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleGetQuote = async (e) => {
     e.preventDefault();
     try {
-      // Define the logic for getting the quote here
-      const res = await axios.get(`http://localhost:8080/quote?stock_id=${inputs.stock_id}`);
-      console.log('Quote:', res.data);
+      const stockId = inputs.stock_id; // Map the stock name to its corresponding ID
+
+      const res = await axios.post(`http://localhost:8080/server/order/quote?stock_id=${stockId}&quantity=${inputs.quantity}`);
       setQuote({
-        companyName: res.data.companyName,
+        companyName: res.data.company_name,
         price: res.data.price,
-        stockName: res.data.stockName,
         quantity: inputs.quantity,
       });
       setErr(false);
+      setShowBuyButton(true); // Show the buy button after getting the quote
     } catch (err) {
       setErr('Failed to get quote');
     }
   };
 
+  const handleBuy = async (e) => {
+  e.preventDefault();
+  try {
+    const token = localStorage.getItem('token');
+    const headers = {
+      Authorization: `Bearer ${token}`,
+    };
+
+    const res = await axios.post('http://localhost:8080/create-payment-intent', {
+      amount: inputs.quantity * 100,
+    }, { headers });
+
+    const clientSecret = res.data.clientSecret;
+
+    const result = await stripe.confirmCardPayment(clientSecret, {
+      payment_method: {
+        card: elements.getElement(CardElement),
+        billing_details: {
+          name: user?.name || 'User Name',
+        },
+      },
+    });
+
+    if (result.error) {
+      setErr(result.error.message);
+      window.alert(result.error.message);
+      return; // Exit early if there's an error
+    }
+
+    if (result.paymentIntent.status === 'succeeded') {
+      const user_id = user.user_id;
+
+      // Check if quote is available
+      if (!quote) {
+        setErr('Quote not fetched.');
+        return;
+      }
+
+      // Proceed with the buy order
+      try {
+        const buyRes = await axios.post('http://localhost:8080/server/order/buy', {
+          side: "ask",
+          stock_symbol: inputs.stock_id,
+          stock_id: stockNameToId[inputs.stock_id],
+          price: quote.price,
+          quantity: inputs.quantity,
+          user_id: user_id
+        });
+
+        setErr('Transaction Successful');
+      } catch (buyErr) {
+        if (buyErr.response && buyErr.response.status === 403) {
+          setErr(buyErr.response.data.error);
+        } else {
+          setErr('An error occurred while placing the order.');
+        }
+      }
+    }
+  } catch (err) {
+    setErr('Payment failed or other error');
+  }
+};
+
   return (
-    <div className="buy-stocks-container" style={{ maxWidth: '400px', margin: 'auto', padding: '20px', border: '1px solid #ccc', borderRadius: '8px', boxShadow: '0 0 10px rgba(0,0,0,0.1)' }}>
-      <h2 style={{ textAlign: 'center', marginBottom: '20px', fontSize: '1.5rem' }}>Sell Stocks</h2>
-      <input
-        type="text"
+    <div className="buy-stocks-container">
+      <h2 className="header">Sell Stocks</h2>
+      <select
         name="stock_id"
         onChange={handleChange}
-        placeholder="Stock ID"
-        style={{ width: '100%', padding: '10px', marginBottom: '10px', borderRadius: '4px', border: '1px solid #ccc' }}
-      />
+        value={inputs.stock_id}
+        className="dropdown"
+      >
+        <option value="" disabled>Select Stock</option>
+        <option value="GOOG">GOOG</option>
+        <option value="APPL">APPL</option>
+        <option value="INFY">INFY</option>
+        <option value="MSFT">MSFT</option>
+        <option value="GS">GS</option>
+      </select>
       <input
         type="number"
         name="quantity"
         onChange={handleChange}
         placeholder="Quantity"
-        style={{ width: '100%', padding: '10px', marginBottom: '10px', borderRadius: '4px', border: '1px solid #ccc' }}
+        className="input"
       />
-      {err && <p style={{ color: 'red', marginTop: '10px' }}>{err}</p>}
-      <form onSubmit={handleBuy} style={{ textAlign: 'center' }}>
-        <CardElement style={{ marginBottom: '10px', padding: '10px', border: '1px solid #ccc', borderRadius: '4px' }} />
-        <button type="submit" style={{ backgroundColor: 'red', color: 'white', padding: '12px 20px', border: 'none', borderRadius: '4px', cursor: 'pointer', marginRight: '10px' }}>
-          Sell
-        </button>
-        <button type="button" onClick={handleGetQuote} style={{ backgroundColor: '#008CBA', color: 'white', padding: '12px 20px', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
-          Get Quote
-        </button>
-      </form>
+      {err && <p className="error">{err}</p>}
+      <button onClick={handleGetQuote} className="quote-button">
+        Get Quote
+      </button>
       {quote && (
-        <div className="quote-container" style={{ marginTop: '20px', padding: '20px', border: '1px solid #ccc', borderRadius: '8px', boxShadow: '0 0 10px rgba(0,0,0,0.1)' }}>
-          <h3 style={{ textAlign: 'center', marginBottom: '10px', fontSize: '1.25rem' }}>Quote Details</h3>
+        <div className="quote-container">
+          <h3 className="quote-header">Quote Details</h3>
           <p><strong>Company Name:</strong> {quote.companyName}</p>
-          <p><strong>Stock Name:</strong> {quote.stockName}</p>
           <p><strong>Quote Price:</strong> {quote.price}</p>
           <p><strong>Quantity:</strong> {quote.quantity}</p>
         </div>
+      )}
+      {showBuyButton && (
+        <form onSubmit={handleBuy} className="form">
+          <CardElement className="card-element" />
+          <button type="submit" className="buy-button">
+            Sell
+          </button>
+        </form>
       )}
     </div>
   );
@@ -123,7 +161,7 @@ const SellOrder = () => {
 
 const App = () => (
   <Elements stripe={stripePromise}>
-    <SellOrder />
+    <PlaceOrder />
   </Elements>
 );
 

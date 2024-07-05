@@ -37,7 +37,7 @@ const Dashboard = () => {
         ]);
         setInvestment(investmentResponse.data);
         setLossGain(lossGainResponse.data);
-        setCurrentValue(currentValueResponse.data);
+        setCurrentValue(currentValueResponse.data); 
         console.log(userId)
       } catch (error) {
         setError('Error fetching user data');

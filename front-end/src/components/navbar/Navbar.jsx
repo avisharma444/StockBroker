@@ -23,7 +23,7 @@ const Navbar = ({ setShowLogin }) => {
             }
         };
 
-        if (menu === 'contact-us') {
+        if (menu === 'my-orders') {
             handleScroll();
         }
     }, [menu]);
@@ -36,6 +36,8 @@ const Navbar = ({ setShowLogin }) => {
             navigate('/');
         } else if (newMenu === 'sell') {
             navigate('/sell');
+        } else if (newMenu === 'my-orders') {
+            navigate('/my-orders');
         }
     };
 
@@ -46,7 +48,7 @@ const Navbar = ({ setShowLogin }) => {
                 <li onClick={() => handleMenuClick('home')} className={menu === 'home' ? 'active' : ''}>Home</li>
                 <li onClick={() => handleMenuClick('menu')} className={menu === 'menu' ? 'active' : ''}>Buy</li>
                 <li onClick={() => handleMenuClick('sell')} className={menu === 'sell' ? 'active' : ''}>Sell</li>
-                <li onClick={() => handleMenuClick('contact-us')} className={menu === 'contact-us' ? 'active' : ''}>Contact Us</li>
+                <li onClick={() => handleMenuClick('my-orders')} className={menu === 'my-orders' ? 'active' : ''}>My Orders</li>
             </ul>
             {!token ? (
                 <button onClick={() => setShowLogin(true)}>Sign In</button>

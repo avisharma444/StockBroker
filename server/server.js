@@ -16,16 +16,20 @@ dotenv.config();
 
 const app = express();
 const stripe = new Stripe('sk_test_51PT5yj07MobmpSNs5EAJdraWi30umCVYNYeljsLjmVTIx11p89zL3RwLGuGFQlpFGa4ojQj23dY7CuRE8NoJGicD00Y1soKXB3');
+
 export const bids = [
     { userId: 1, price: 100, quantity: 10 },
     { userId: 2, price: 150, quantity: 15 },
-    { userId: 3, price: 120, quantity: 20 }
+    { userId: 3, price: 120, quantity: 20 },
 ];
+
 export const asks = [
     { userId: 4, price: 200, quantity: 25 },
     { userId: 5, price: 180, quantity: 10 },
     { userId: 6, price: 220, quantity: 5 }
 ];
+// Printing bids
+
 
 // Enable CORS for all routes
 app.use((req, res, next) => {

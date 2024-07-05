@@ -61,28 +61,34 @@ export async function getuserinfo(user_id) {
 
 }
 
-export async function flip_db_balance(user1, user2, stock_id, price, quantity) {
+export async function flip_db_balance(user1, user2, stock_id, price, quantity,stock_symbol) {
     try {
         // Retrieve stock information
+        console.log("temp0 - ",user1, user2, stock_id, price, quantity,stock_symbol)
         const stock_info = await find_specific_stock(stock_id);
-        const ticker = stock_info.symbol;
-
+        const ticker = stock_symbol;
+        const sid = stock_info[0].stock_id
         // Query to fetch balances for both users
         const query1 = `SELECT balance FROM USER WHERE user_id = ?`;
         const [balance1] = await pool.query(query1, [user1]);
         const [balance2] = await pool.query(query1, [user2]);
 
         // Query to fetch stock holdings for both users
-        const query3 = `SELECT ${ticker} FROM userstock WHERE user_id = ?`;
+        const query3 = `SELECT ${ticker} as stock FROM userstock WHERE user_id = ?`;
         const [stocks1] = await pool.query(query3, [user1]);
         const [stocks2] = await pool.query(query3, [user2]);
-
+        console.log("temp1 = ",stocks1 , stocks2 , quantity , price)
+        console.log("temp2 = ",balance1 , balance2 , quantity , price)
         // Calculate new balances and stock holdings
-        const newStocks1 = stocks1 - quantity;
-        const newStocks2 = stocks2 + quantity;
-        const newValue1 = balance1 + (quantity * price);
-        const newValue2 = balance2 - (quantity * price);
+        const newStocks1 = parseInt(stocks1[0].stock )- quantity;
+        const newStocks2 = parseInt(stocks2[0].stock) + quantity;
+        const newValue1 = balance1[0].balance + (quantity * price);
+        const newValue2 = balance2[0].balance - (quantity * price);
+        if(newStocks1 < 0 || newValue2 < 0 ){
 
+        }
+        console.log("updating - ")
+        console.log(user1, user2, stock_id, price, quantity,stock_symbol)
         // Update queries to update balances and stock holdings
         const updateQuery1 = `UPDATE USER SET balance = ? WHERE user_id = ?`;
         await pool.query(updateQuery1, [newValue1, user1]);
@@ -95,14 +101,21 @@ export async function flip_db_balance(user1, user2, stock_id, price, quantity) {
 
         const updateQuery4 = `UPDATE userstock SET ${ticker} = ? WHERE user_id = ?`;
         await pool.query(updateQuery4, [newStocks2, user2]);
-
+        
+        const updateQuery5 = `INSERT INTO transactions (user_id, stock_id, transaction_value, transaction_type, quantity) VALUES (?, ?, ?, ?, ?)`;
+        await pool.query(updateQuery5, [user2, sid, (quantity * price) , "buy" , quantity]);
+        await pool.query(updateQuery5, [user1, sid, (quantity * price) , "sell" , quantity]);
         // Optionally return something meaningful upon success
+        const updateQuery6 = `UPDATE stock SET last_traded_price = ? WHERE (stock_id = ?)`;
+        await pool.query(updateQuery6, [price , sid]);
+
         return { success: true, message: 'Transaction completed successfully' };
     } catch (error) {
         console.error('Error executing transaction:', error);
         throw error; // Propagate the error upwards
     }
 }
+
 export async function finduser(email,password) {
     const query = `
         SELECT * FROM USER 
@@ -137,6 +150,13 @@ export const finduserLogin = async (email) => {
         throw error;
     }
 };
+export async function get_user_balance(user_id){
+     const query = `SELECT balance FROM USER WHERE user_id = ?`;
+    const [results] = await pool.query(query, [user_id]);
+    console.log(results);
+    const userBalance = results[0].balance;
+    return userBalance;
+}
 export async function insertuser(password,aadhar,PAN_card,phone_no,email,dob,name){
     try{
     const [query_res1] = await pool.query("SELECT MAX(user_id) as id FROM user;");
@@ -161,7 +181,13 @@ export async function addAdmin(username , password){
     `,[username,password])
     return get_admin_pass();
 }
-
+export async function get_user_transactions(user_id){
+    const [query_res] = await pool.query(`
+    select * from transactions where user_id = ?
+    `,[user_id])
+    console.log("TRANSACTIONS - ",query_res)
+    return query_res
+}
 export async function get_watchlist(user_id) {
     
     const query = `
