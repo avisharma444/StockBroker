@@ -71,10 +71,6 @@ This document describes the working parts of the algorithm for managing the orde
 - **Balance Updates**: When a match is found, the function flips the balance between the user IDs. It decreases the quantity of the stock from the seller and increases it for the buyer. The cash balance is updated based on the stock's price and exchange rate.
 - **Handle Partial Fills**: If an order cannot be completely filled, the remaining quantity is adjusted, and the partially filled order is updated in the order book.
 
-### 2. Depth Endpoint
-- **Calculate and Sort Depth**: The depth endpoint calculates the total quantity available at each price level by iterating through bids and asks, and sorts the results.
-- **Generate Depth Graph**: The accumulated data is used to generate a depth graph, visualizing the market depth for the frontend users.
-
 ### 3. Balance Endpoint
 - **Retrieve and Return Balance**: The endpoint fetches the user's balance details for USD and specific stocks based on their user ID, ensuring the user exists in the system.
 
