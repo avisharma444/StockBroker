@@ -1,18 +1,19 @@
 # Trading Platform
 
 Welcome to the Trading Platform! This application allows users to trade stocks in real-time, manage their investments, and keep track of their favorite stocks
-<div style="text-align: center;">
-  <img src="resources/Screenshot 2024-07-14 125137.png" alt="Homepage Screen" width="200px" height="350px">
+<div>
+  <img src="resources/Screenshot 2024-07-14 125137.png" alt="Homepage Screen" width="500px" height="280px">
+  <img src="resources/Screenshot 2024-07-14 125153.png" alt="Homepage Screen" width="500px" height="280px">
 </div>
+
+
 ## Table of Contents
 - [Features](#features)
 - [Technologies Used](#technologies-used)
 - [Installation](#installation)
-- [Usage](#usage)
-- [Database Schema](#database-schema)
-- [Architecture](#architecture)
+- [Database Schema](#database-schema) (to be updated)
+- [Architecture](#architecture) (to be updated)
 - [Algorithm](#algorithm-components)
-- [License](#license)
 
 ## Features
 - **User Authentication**: Secure user sign-up and login using JWT.
@@ -20,6 +21,11 @@ Welcome to the Trading Platform! This application allows users to trade stocks i
 - **Investment Management**: Monitor and manage your portfolio.
 - **Watchlist**: Keep an eye on your favorite stocks.
 - **Fast Transactions**: Implemented in-memory order books management algorithms for efficient transactions.
+<div>
+  <img src="resources/Screenshot 2024-07-14 134048.png" alt="Homepage Screen" width="500px" height="280px">
+  <img src="resources/Screenshot 2024-07-14 134102.png" alt="Homepage Screen" width="500px" height="280px">
+</div>
+
 
 ## Technologies Used
 - **Frontend**: JavaScript, React
@@ -54,6 +60,11 @@ This document describes the working parts of the algorithm for managing the orde
 - **Prevent Self-Trade**: It includes logic to prevent users from trading with themselves.
 
 ## Detailed Steps
+
+<div>
+  <img src="resources/Screenshot 2024-07-14 133920.png" alt="Homepage Screen" width="500px" height="280px">
+  <img src="resources/Screenshot 2024-07-14 133940.png" alt="Homepage Screen" width="500px" height="280px">
+</div>
 
 ### 1. Order Matching and Filling
 - **Iterate and Match Orders**: The algorithm iterates over the bids array and tries to match each bid with an ask that has a price less than or equal to the bid price.
