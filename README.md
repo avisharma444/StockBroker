@@ -2,8 +2,8 @@
 
 Welcome to the Trading Platform! This application allows users to trade stocks in real-time, manage their investments, and keep track of their favorite stocks
 <div>
-  <img src="resources/Screenshot 2024-07-14 125137.png" alt="Homepage Screen" width="500px" height="280px">
-  <img src="resources/Screenshot 2024-07-14 125153.png" alt="Homepage Screen" width="500px" height="280px">
+  <img src="resources/Screenshot 2024-07-14 125137.png" alt="Homepage Screen" width="380px" height="220px">
+  <img src="resources/Screenshot 2024-07-14 125153.png" alt="Homepage Screen" width="380px" height="220px">
 </div>
 
 
@@ -22,8 +22,8 @@ Welcome to the Trading Platform! This application allows users to trade stocks i
 - **Watchlist**: Keep an eye on your favorite stocks.
 - **Fast Transactions**: Implemented in-memory order books management algorithms for efficient transactions.
 <div>
-  <img src="resources/Screenshot 2024-07-14 134048.png" alt="Homepage Screen" width="500px" height="280px">
-  <img src="resources/Screenshot 2024-07-14 134102.png" alt="Homepage Screen" width="500px" height="280px">
+  <img src="resources/Screenshot 2024-07-14 134048.png" alt="Homepage Screen" width="380px" height="220px">
+  <img src="resources/Screenshot 2024-07-14 134102.png" alt="Homepage Screen" width="380px" height="220px">
 </div>
 
 
@@ -62,8 +62,8 @@ This document describes the working parts of the algorithm for managing the orde
 ## Detailed Steps
 
 <div>
-  <img src="resources/Screenshot 2024-07-14 133920.png" alt="Homepage Screen" width="500px" height="280px">
-  <img src="resources/Screenshot 2024-07-14 133940.png" alt="Homepage Screen" width="500px" height="280px">
+  <img src="resources/Screenshot 2024-07-14 133920.png" alt="Homepage Screen"width="380px" height="220px">
+  <img src="resources/Screenshot 2024-07-14 133940.png" alt="Homepage Screen"width="380px" height="220px">
 </div>
 
 ### 1. Order Matching and Filling
