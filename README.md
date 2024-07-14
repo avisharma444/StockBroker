@@ -78,6 +78,7 @@ This document describes the working parts of the algorithm for managing the orde
 ### 3. Balance Endpoint
 - **Retrieve and Return Balance**: The endpoint fetches the user's balance details for USD and specific stocks based on their user ID, ensuring the user exists in the system.
 
+credits - https://github.com/hkirat
 
 By following these steps and using these functions, the algorithm efficiently manages the order book, processes trades in real-time, and provides necessary endpoints for frontend integration.
 ## Installation
