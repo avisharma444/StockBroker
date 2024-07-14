@@ -1,7 +1,9 @@
 # Trading Platform
 
 Welcome to the Trading Platform! This application allows users to trade stocks in real-time, manage their investments, and keep track of their favorite stocks
-
+<div style="text-align: center;">
+  <img src="resources/Screenshot 2024-07-14 125137.png" alt="Homepage Screen" width="200px" height="350px">
+</div>
 ## Table of Contents
 - [Features](#features)
 - [Technologies Used](#technologies-used)
